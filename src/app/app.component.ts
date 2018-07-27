@@ -13,11 +13,14 @@ export class AppComponent implements OnInit {
   task = "none"
   timeFormatted: string
   tasks: string[]
+  logs: LogItem[]
 
   constructor(public snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
-    this.tasks = this.getLogFromLocalStorage().tasks
+    const data = this.getLogFromLocalStorage()
+    this.tasks = data.tasks
+    this.logs = data.logItems
   }
 
   ngModelChange(event) {
@@ -53,7 +56,10 @@ export class AppComponent implements OnInit {
 
   newTask() {
     const task = prompt("add task")
-    if (!task) return
+    if (!task) {
+      this.task = "none"
+      return
+    }
     if (task === " ") {
       this.snackBar.open("invalid task name", "OK", { duration: 5000 })
     }

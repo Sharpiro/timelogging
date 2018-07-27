@@ -5,11 +5,7 @@
 }
 
 .row{
-    flex-basis: 100%;
-}
-
-.form{
-    flex-basis:65%;
+    flex-basis: 80%;
 }
 
 .input{
@@ -22,4 +18,14 @@
 
 .button-flex{
     width: 20%;
+}
+
+.listItem{
+    width:300px;
+}
+
+@media screen and (max-width: 400px) {
+    .row{
+        flex-basis: 95%;
+    }
 }
