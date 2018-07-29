@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material';
+import { StorageService, Log } from './storage.service';
 
 @Component({
   selector: 'app-root',
@@ -7,20 +8,18 @@ import { MatSnackBar } from '@angular/material';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  key = "log"
 
   title = 'timelogging'
   task = "none"
   timeFormatted: string
   tasks: string[]
-  logs: LogItem[]
+  logs: Log[]
 
-  constructor(public snackBar: MatSnackBar) { }
+  constructor(public snackBar: MatSnackBar, private storageService: StorageService) { }
 
   ngOnInit(): void {
-    const data = this.getLogFromLocalStorage()
-    this.tasks = data.tasks
-    this.logs = data.logItems
+    this.tasks = this.storageService.getTasks()
+    this.logs = this.storageService.getLogs()
   }
 
   ngModelChange(event) {
@@ -41,7 +40,7 @@ export class AppComponent implements OnInit {
     console.log(this.task)
     console.log(this.timeFormatted)
     console.log(minutes)
-    this.addOrUpdateLocalStorage({ task: this.task, time: minutes })
+    this.storageService.addLog({ task: this.task, time: minutes })
     this.timeFormatted = null
   }
 
@@ -63,34 +62,14 @@ export class AppComponent implements OnInit {
     if (task === " ") {
       this.snackBar.open("invalid task name", "OK", { duration: 5000 })
     }
-    const log = this.getLogFromLocalStorage()
-    log.tasks.push(task)
-    this.tasks = log.tasks
+    this.storageService.addTask(task)
+    this.tasks = this.storageService.getTasks()
     this.task = task
-    this.updateLocalStorage(log)
-    console.log(log)
   }
 
   list() {
-    const log = this.getLogFromLocalStorage()
-    console.log(log)
-  }
-
-  addOrUpdateLocalStorage(newItem: LogItem) {
-    const log = this.getLogFromLocalStorage()
-    log.logItems.push(newItem)
-    console.log(log)
-    this.updateLocalStorage(log)
-  }
-
-  updateLocalStorage(log: Log) {
-    localStorage.setItem(this.key, JSON.stringify(log))
-  }
-
-  getLogFromLocalStorage() {
-    let logJson = localStorage.getItem(this.key)
-    let log: Log = logJson ? JSON.parse(logJson) : { tasks: [], logItems: [] }
-    return log
+    const logs = this.storageService.getLogs()
+    console.log(logs)
   }
 
   reset() {
@@ -109,14 +88,4 @@ export class AppComponent implements OnInit {
     }
     return temp
   }
-}
-
-export interface LogItem {
-  task: string
-  time: number
-}
-
-export interface Log {
-  tasks: string[]
-  logItems: LogItem[]
 }

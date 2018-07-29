@@ -1,10 +1,11 @@
-.container {
+.flex-container {
     padding-top:15px;
     display: flex;
     justify-content: center;
+    flex-wrap: wrap;
 }
 
-.row{
+.flex-item{
     flex-basis: 80%;
 }
 
@@ -13,19 +14,25 @@
 }
 
 .button-padding{
-    padding-right: 10px;
+    padding: 0px 5px;
+    flex-basis: 20%;
 }
 
 .button-flex{
-    width: 20%;
+    width:80%;
 }
 
-.listItem{
-    width:300px;
-}
-
-@media screen and (max-width: 400px) {
-    .row{
+@media screen and (max-width: 440px) {
+    .flex-item{
         flex-basis: 95%;
+    }
+
+    .button-flex{
+        width: 100%;
+    }
+
+    .button-padding{
+        flex-basis: 100%;
+        padding: 5px 0px;
     }
 }
