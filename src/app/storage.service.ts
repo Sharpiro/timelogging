@@ -15,10 +15,11 @@ export class StorageService {
     return logs
   }
 
-  addLog(log: Log) {
+  addLog(log: Log): Log[] {
     const logs = this.getLogs()
-    logs.push(log)
+    logs.unshift(log)
     localStorage.setItem(this.logsKey, JSON.stringify(logs))
+    return logs
   }
 
   getTasks() {
@@ -34,7 +35,20 @@ export class StorageService {
   }
 }
 
-export interface Log {
+interface ILog {
   task: string
-  time: number
+  duration: number
+  timeStamp?: Date
+  logLevel?: number
+}
+
+export class Log {
+  task: string
+  duration: number
+  timeStampUtc = new Date().toISOString()
+  logLevel = 3
+
+  constructor(init: ILog) {
+    Object.assign(this, init)
+  }
 }

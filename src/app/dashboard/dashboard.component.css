@@ -1,0 +1,38 @@
+.flex-container {
+    padding-top:15px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.flex-item{
+    flex-basis: 80%;
+}
+
+.input{
+    width:100%;
+}
+
+.button-padding{
+    padding: 0px 5px;
+    flex-basis: 20%;
+}
+
+.button-flex{
+    width:80%;
+}
+
+@media screen and (max-width: 440px) {
+    .flex-item{
+        flex-basis: 95%;
+    }
+
+    .button-flex{
+        width: 100%;
+    }
+
+    .button-padding{
+        flex-basis: 100%;
+        padding: 5px 0px;
+    }
+}

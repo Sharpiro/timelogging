@@ -1,0 +1,36 @@
+<div class="flex-container">
+  <form class="flex-item">
+    <mat-form-field class="input">
+      <mat-select name="taskx" placeholder="Task" [(ngModel)]="task" (ngModelChange)="ngModelChange($event)">
+        <mat-option value="none">None</mat-option>
+        <mat-option *ngFor="let taskx of tasks" [value]="taskx">
+          {{taskx}}
+        </mat-option>
+        <mat-option value="addNew">Add New...</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="input">
+      <input name="durationFormatted" matInput placeholder="Duration" [(ngModel)]="durationFormatted">
+    </mat-form-field>
+
+    <div class="flex-container">
+      <div class="button-padding">
+        <button class="button-flex" mat-raised-button type="button" (click)="submit()">Submit</button>
+      </div>
+      <div class="button-padding">
+        <button class="button-flex" mat-raised-button type="button" (click)="list()">List</button>
+      </div>
+      <div class="button-padding">
+        <button class="button-flex" mat-raised-button type="button" (click)="reset()">Reset</button>
+      </div>
+    </div>
+
+  </form>
+</div>
+
+<div class="flex-container">
+  <ul>
+    <li class="listItem" *ngFor="let log of logs">{{log.task}}: {{log.duration}}: {{log.timeStampUtc}}</li>
+  </ul>
+</div>

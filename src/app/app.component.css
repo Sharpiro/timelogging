@@ -1,38 +1,36 @@
-.flex-container {
-    padding-top:15px;
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
+.active{
+    background-color: #3f51b5;
+    color: #fafafa
 }
 
-.flex-item{
-    flex-basis: 80%;
+.menu-icon{
+    font-size: 30px;
+    height: 64px;
+    width: 64px;
+    line-height: 64px;
+    vertical-align: middle;
 }
 
-.input{
-    width:100%;
+.menu-button{
+    cursor: pointer;
 }
 
-.button-padding{
-    padding: 0px 5px;
-    flex-basis: 20%;
+.menu-link{
+    width:200px;
 }
 
-.button-flex{
-    width:80%;
+.sidenav-container {
+    position: absolute;
+    top: 64px;
+    bottom: 0;
+    left: 0;
+    right: 0;
 }
 
-@media screen and (max-width: 440px) {
-    .flex-item{
-        flex-basis: 95%;
-    }
+  mat-sidenav{
+      background-color: rgba(0,0,0,.03);
+  }
 
-    .button-flex{
-        width: 100%;
-    }
-
-    .button-padding{
-        flex-basis: 100%;
-        padding: 5px 0px;
-    }
-}
+  .header{
+      font-size: 20px;
+  }
