@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-
-const TableStorage = (<any>window).AzureStorage.Table
+import * as azure from '../js/azure-storage.table';
 
 @Component({
   selector: 'app-reporting',
@@ -12,11 +11,45 @@ export class ReportingComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+    const devCredentials = azure.generateDevelopmentStorageCredentials()
+    const tableService = azure.createTableService(devCredentials)
+    console.log(tableService);
 
-    console.log(TableStorage);
-    var tableSvc = TableStorage.createTableService("devstoreaccount1", "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==");
-    
-    // const blobService = azure.createBlobService()
+
+    tableService.doesTableExist("mytable", (error, result, response) => {
+      if (!error) {
+        console.log(result)
+        console.log(response)
+      }
+      else {
+        console.error(error)
+      }
+    })
+
+    tableService.createTableIfNotExists('mytable', function (error, result, response) {
+      if (!error) {
+        var entity = {
+          PartitionKey: 'part2',
+          RowKey: 'row2',
+          boolValueTrue: true,
+          boolValueFalse: false,
+          intValue: 42,
+          dateValue: new Date(Date.UTC(2011, 10, 25)),
+          complexDateValue: new Date(Date.UTC(2013, 2, 16, 1, 46, 20))
+        }
+        tableService.insertEntity('mytable', entity, function (error, result, response) {
+          if (!error) {
+            console.log(result)
+            console.log(response)
+          }
+          else {
+            console.error(error)
+          }
+        });
+      }
+      else {
+        console.error(error)
+      }
+    })
   }
-
 }
