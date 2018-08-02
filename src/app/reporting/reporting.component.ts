@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import * as azure from '../js/azure-storage.table';
+import { TableService } from '../table.service';
 
 @Component({
   selector: 'app-reporting',
@@ -7,49 +7,31 @@ import * as azure from '../js/azure-storage.table';
   styleUrls: ['./reporting.component.css']
 })
 export class ReportingComponent implements OnInit {
+  constructor(private tableService: TableService) { }
 
-  constructor() { }
-
-  ngOnInit() {
-    const devCredentials = azure.generateDevelopmentStorageCredentials()
-    const tableService = azure.createTableService(devCredentials)
-    console.log(tableService);
+  async ngOnInit() {
 
 
-    tableService.doesTableExist("mytable", (error, result, response) => {
-      if (!error) {
-        console.log(result)
-        console.log(response)
+    try {
+      const tableExistsResult = await this.tableService.tableExists("mytable")
+      console.log(tableExistsResult)
+
+      // const tableCreateResult = await this.tableService.createTable("mytable")
+      // console.log(tableCreateResult)
+
+      let entity = {
+        PartitionKey: 'part2',
+        RowKey: 'row97',
+        boolValueTrue: true,
+        boolValueFalse: false,
+        intValue: 42,
+        dateValue: new Date(Date.UTC(2011, 10, 25)),
+        complexDateValue: new Date(Date.UTC(2013, 2, 16, 1, 46, 20))
       }
-      else {
-        console.error(error)
-      }
-    })
-
-    tableService.createTableIfNotExists('mytable', function (error, result, response) {
-      if (!error) {
-        var entity = {
-          PartitionKey: 'part2',
-          RowKey: 'row2',
-          boolValueTrue: true,
-          boolValueFalse: false,
-          intValue: 42,
-          dateValue: new Date(Date.UTC(2011, 10, 25)),
-          complexDateValue: new Date(Date.UTC(2013, 2, 16, 1, 46, 20))
-        }
-        tableService.insertEntity('mytable', entity, function (error, result, response) {
-          if (!error) {
-            console.log(result)
-            console.log(response)
-          }
-          else {
-            console.error(error)
-          }
-        });
-      }
-      else {
-        console.error(error)
-      }
-    })
+      await this.tableService.insertLog(entity)
+    }
+    catch (error) {
+      console.error(error)
+    }
   }
 }
