@@ -41,7 +41,7 @@ export class DashboardComponent implements OnInit {
     console.log(this.durationFormatted)
     console.log(minutes)
 
-    const newLog = new Log({ task: this.task, duration: minutes })
+    const newLog = new Log(this.task, minutes)
     this.logs = this.storageService.addLog(newLog)
     this.durationFormatted = null
   }

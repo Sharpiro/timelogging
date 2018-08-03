@@ -15,7 +15,7 @@ export class TableService {
 
   async tableExists(tableName: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.tableService.doesTableExist("mytable", (error, result, response) => {
+      this.tableService.doesTableExist(tableName, (error, result, response) => {
         if (!error) {
           resolve(result.exists)
         }
@@ -28,7 +28,7 @@ export class TableService {
 
   async createTable(tableName: string): Promise<azure.TableService.TableResult> {
     return new Promise<azure.TableService.TableResult>((resolve, reject) => {
-      this.tableService.createTableIfNotExists('mytable', function (error, result, response) {
+      this.tableService.createTableIfNotExists(tableName, function (error, result, response) {
         if (!error) {
           resolve(result)
         }
@@ -39,12 +39,12 @@ export class TableService {
     })
   }
 
-  async insertLog(log: Readonly<Log>): Promise<void> {
-    let tableEntity: TableEntity = { PartitionKey: "1", RowKey: "1" }
+  async insertLog(tableName: string, log: Readonly<Log>): Promise<void> {
+    let tableEntity: TableEntity = { PartitionKey: log.task, RowKey: new Date().toISOString() }
     let tableLog: TableLog = this.createIntersection(log, tableEntity)
 
     return new Promise<void>((resolve, reject) => {
-      this.tableService.insertEntity('mytable', tableLog, function (error, result, response) {
+      this.tableService.insertEntity(tableName, tableLog, function (error, result, response) {
         if (!error) {
           resolve()
         }
