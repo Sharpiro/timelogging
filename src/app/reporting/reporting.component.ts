@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { TableService } from '../table.service';
+import { TableService } from '../shared/table.service';
+import { Log } from '../shared/log';
+import { MatSnackBar } from '@angular/material';
 
 @Component({
   selector: 'app-reporting',
@@ -7,7 +9,7 @@ import { TableService } from '../table.service';
   styleUrls: ['./reporting.component.css']
 })
 export class ReportingComponent implements OnInit {
-  constructor(private tableService: TableService) { }
+  constructor(public snackBar: MatSnackBar, private tableService: TableService) { }
 
   async ngOnInit() {
 
@@ -19,18 +21,14 @@ export class ReportingComponent implements OnInit {
       // const tableCreateResult = await this.tableService.createTable("mytable")
       // console.log(tableCreateResult)
 
-      let entity = {
-        PartitionKey: 'part2',
-        RowKey: 'row97',
-        boolValueTrue: true,
-        boolValueFalse: false,
-        intValue: 42,
-        dateValue: new Date(Date.UTC(2011, 10, 25)),
-        complexDateValue: new Date(Date.UTC(2013, 2, 16, 1, 46, 20))
-      }
-      await this.tableService.insertLog(entity)
+      const log = new Log({
+        task: "task1",
+        duration: 25
+      })
+      await this.tableService.insertLog(log)
     }
     catch (error) {
+      this.snackBar.open(error.message, undefined, { duration: 5000 })
       console.error(error)
     }
   }

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material';
-import { StorageService, Log } from '../storage.service';
+import { StorageService } from '../shared/storage.service';
+import { Log } from '../shared/log';
 
 @Component({
   selector: 'app-dashboard',

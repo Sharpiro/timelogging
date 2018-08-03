@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Log } from './log';
 
 @Injectable({
   providedIn: 'root'
@@ -32,23 +33,5 @@ export class StorageService {
     const tasks = this.getTasks()
     tasks.push(task)
     localStorage.setItem(this.tasksKey, JSON.stringify(tasks))
-  }
-}
-
-interface ILog {
-  task: string
-  duration: number
-  timeStamp?: Date
-  logLevel?: number
-}
-
-export class Log {
-  task: string
-  duration: number
-  timeStampUtc = new Date().toISOString()
-  logLevel = 3
-
-  constructor(init: ILog) {
-    Object.assign(this, init)
   }
 }

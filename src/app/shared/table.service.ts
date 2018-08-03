@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import * as azure from './js/azure-storage.table';
+import * as azure from '../../assets/js/azure-storage.table';
+import { TableLog, Log, TableEntity } from './log';
 
 @Injectable({
   providedIn: 'root'
@@ -38,9 +39,12 @@ export class TableService {
     })
   }
 
-  async insertLog(entity: any): Promise<void> {
+  async insertLog(log: Readonly<Log>): Promise<void> {
+    let tableEntity: TableEntity = { PartitionKey: "1", RowKey: "1" }
+    let tableLog: TableLog = this.createIntersection(log, tableEntity)
+
     return new Promise<void>((resolve, reject) => {
-      this.tableService.insertEntity('mytable', entity, function (error, result, response) {
+      this.tableService.insertEntity('mytable', tableLog, function (error, result, response) {
         if (!error) {
           resolve()
         }
@@ -49,5 +53,18 @@ export class TableService {
         }
       })
     })
+  }
+
+  private createIntersection<T, U>(first: T, second: U): T & U {
+    let result = <T & U>{};
+    for (let id in first) {
+      (<any>result)[id] = (<any>first)[id];
+    }
+    for (let id in second) {
+      if (!result.hasOwnProperty(id)) {
+        (<any>result)[id] = (<any>second)[id];
+      }
+    }
+    return result;
   }
 }
