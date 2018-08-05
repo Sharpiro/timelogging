@@ -13,27 +13,20 @@ export class Log {
 
 export type TableLog = Readonly<TableEntity> & Readonly<Log>
 
-const partitionKey = (target: Object, key: string) => {
-    let value = target[key];
+// const partitionKey = (target: Object, key: string | symbol) => {
+//     let decoratorName = "partitionKey"
+//     Reflect.defineMetadata(decoratorName, key, target)
+// }
 
-    const getter = () => {
-        console.log(`Getting value '${key}': ${value}`);
-        return value;
-    };
-    const setter = (val) => {
-        console.log(`Setting value '${key}': ${val}`);
-        value = val;
+// const rowKey = (target: Object, key: string | symbol) => {
+//     const decoratorName = "rowKey"
+//     Reflect.defineMetadata(decoratorName, key, target)
+// }
+
+const tableKey = (decoratorName: "partition" | "row") => {
+    return (target: Object, key: string | symbol) => {
+        Reflect.defineMetadata(decoratorName, key, target)
     }
-    Reflect.deleteProperty(target, key)
-    Reflect.deleteProperty[key];
-    Reflect.defineProperty(target, key, {
-        get: getter,
-        set: setter
-    });
-}
-
-const rowKey = (target: Object, key: string | symbol) => {
-
 }
 
 function init(target, x?: any) {
@@ -49,8 +42,8 @@ function init(target, x?: any) {
 
 function PluginDecorator(name: any) {
     return (ctor: Function) => {
-        console.log("Plugin found:");
-        console.log(name)
+        // console.log("Plugin found:");
+        // console.log(name)
     }
 }
 
@@ -78,23 +71,15 @@ export class P {
 // }
 
 export class Log3 {
-    @partitionKey task: string
-    @partitionKey createdDateISO: string;
+    @tableKey("partition") task: string
+    @tableKey("row") createdDateISO: string;
     duration: number;
 
-    constructor(task: string, duration: number, createdDateISO = new Date().toISOString()) {
+    constructor();
+    constructor(task: string, duration: number, createdDateISO?: string);
+    constructor(task?: string, duration?: number, createdDateISO = new Date().toISOString()) {
         this.task = task
         this.duration = duration
         this.createdDateISO = createdDateISO
     }
-}
-
-
-
-export enum LogLevel {
-    Debug = 1,
-    Info = 2,
-    Warn = 3,
-    Error = 4,
-    Fatal = 5
 }

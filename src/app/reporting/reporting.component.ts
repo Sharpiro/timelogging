@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { TableService } from '../shared/table.service';
-import { Log, P, Log3 } from '../shared/log';
+import { Log3, TableEntity } from '../shared/log';
 import { MatSnackBar } from '@angular/material';
+import "reflect-metadata";
+import { nameof } from '../shared/type-functions';
 
 @Component({
   selector: 'app-reporting',
@@ -9,9 +10,8 @@ import { MatSnackBar } from '@angular/material';
   styleUrls: ['./reporting.component.css']
 })
 export class ReportingComponent implements OnInit {
-  private readonly tableName = "timelogging"
 
-  constructor(public snackBar: MatSnackBar, private tableService: TableService) { }
+  constructor(public snackBar: MatSnackBar) { }
 
   async ngOnInit() {
     try {
@@ -22,8 +22,15 @@ export class ReportingComponent implements OnInit {
       // if (!tableExistsResult) throw new Error("table does not exist!")
 
       // const log = new Log("task1", 5)
-      const log = new Log3("task1", 12)
-      console.log(log)
+      const originalLog = new Log3("task1", 12)
+      console.log(originalLog);
+
+      const tableEntity = this.toTableEntity(originalLog)
+      console.log(tableEntity);
+
+      const newLog = this.fromTableEntity(tableEntity, Log3)
+      console.log(newLog);
+
       // await this.tableService.insertLog(this.tableName, log)
 
       // setInterval(() => {
@@ -37,5 +44,57 @@ export class ReportingComponent implements OnInit {
       this.snackBar.open(error.message, undefined, { duration: 5000 })
       console.error(error)
     }
+  }
+
+  toTableEntity(obj: any): TableEntity {
+    const partitionKey = Reflect.getMetadata("partition", obj)
+    const rowKey = Reflect.getMetadata("row", obj)
+    if (!partitionKey || !rowKey) throw new Error("Error, provided type does not contain 'partition' or 'row' 'tableKey' decorators")
+    if (!obj[partitionKey] || !obj[rowKey]) throw new Error(`Error, property '${partitionKey}' or '${rowKey}' was not defined`)
+
+    let tableEntity: any = {}
+    for (let id in obj) {
+      if (id == partitionKey) {
+        tableEntity[nameof<TableEntity>("PartitionKey")] = obj[id];
+      }
+      else if (id == rowKey) {
+        tableEntity[nameof<TableEntity>("RowKey")] = obj[id];
+      }
+      else {
+        tableEntity[id] = obj[id];
+      }
+    }
+
+    if (!tableEntity[nameof<TableEntity>("PartitionKey")] || !tableEntity[nameof<TableEntity>("RowKey")])
+      throw new Error("Error converting table entity, PartitonKey and RowKey are required")
+
+    return tableEntity
+  }
+
+  private fromTableEntity<T>(tableEntity: TableEntity, type: (new () => T)): T {
+    if (!tableEntity[nameof<TableEntity>("PartitionKey")] || !tableEntity[nameof<TableEntity>("RowKey")])
+      throw new Error("Error converting table entity, PartitonKey and RowKey are required")
+
+    const instance = new type()
+    const partitionKey = Reflect.getMetadata("partition", instance)
+    const rowKey = Reflect.getMetadata("row", instance)
+    if (!partitionKey || !rowKey) throw new Error("Error, provided type does not contain 'partition' or 'row' 'tableKey' decorators")
+
+    for (let id in tableEntity) {
+      if (id == nameof<TableEntity>("PartitionKey")) {
+        instance[partitionKey] = tableEntity[id];
+      }
+      else if (id == nameof<TableEntity>("RowKey")) {
+        instance[rowKey] = tableEntity[id];
+      }
+      else {
+        instance[id] = tableEntity[id];
+      }
+    }
+
+    if (!instance[partitionKey] || !instance[rowKey])
+      throw new Error("Error converting table entity, PartitonKey and RowKey are required")
+
+    return instance
   }
 }
