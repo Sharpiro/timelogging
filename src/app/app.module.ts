@@ -9,6 +9,16 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AppRoutingModule } from './app-routing.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ReportingComponent } from './reporting/reporting.component';
+import { TableService } from './shared/table.service';
+import * as azure from '../assets/js/azure-storage.table';
+
+
+const tableServiceFactory = () => {
+  const tableName = "timelogging"
+  const devCredentials = azure.generateDevelopmentStorageCredentials()
+  const tableService = azure.createTableService(devCredentials)
+  return new TableService(tableName, tableService)
+}
 
 @NgModule({
   declarations: [
@@ -32,7 +42,9 @@ import { ReportingComponent } from './reporting/reporting.component';
     MatIconModule,
     MatToolbarModule
   ],
-  providers: [],
+  providers: [
+    { provide: TableService, useFactory: tableServiceFactory }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
