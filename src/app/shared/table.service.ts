@@ -3,9 +3,9 @@ import * as azure from '../../assets/js/azure-storage.table';
 import { TableEntity } from './log';
 import { nameof } from './type-functions';
 
-@Injectable({
-  providedIn: 'root'
-})
+// @Injectable({
+//   providedIn: 'root'
+// })
 export class TableService {
   private tableService: azure.TableService
   private _tableName: string
