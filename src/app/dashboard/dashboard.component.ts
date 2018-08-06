@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material';
-import { StorageService } from '../shared/storage.service';
-import { Log } from '../shared/log';
+import { Log, Task } from '../shared/log';
+import { TimeloggingService } from '../shared/timelogging.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -10,16 +10,17 @@ import { Log } from '../shared/log';
 })
 export class DashboardComponent implements OnInit {
   title = 'timelogging'
-  task = "none"
+  task: Task
   durationFormatted: string
-  tasks: string[]
+  tasks: Task[]
   logs: Log[]
 
-  constructor(public snackBar: MatSnackBar, private storageService: StorageService) { }
+  // constructor(public snackBar: MatSnackBar, private storageService: StorageService) { }
+  constructor(public snackBar: MatSnackBar, private timeLoggingService: TimeloggingService) { }
 
-  ngOnInit(): void {
-    this.tasks = this.storageService.getTasks()
-    this.logs = this.storageService.getLogs()
+  async ngOnInit() {
+    this.tasks = await this.timeLoggingService.getTasks()
+    // this.logs = this.storageService.getLogs()
   }
 
   ngModelChange(event) {
@@ -28,7 +29,7 @@ export class DashboardComponent implements OnInit {
   }
 
   submit() {
-    if (!this.task || this.task == "none" || !this.durationFormatted) {
+    if (!this.task || !this.durationFormatted) {
       this.snackBar.open("please fill out all fields", "OK", { duration: 5000 })
       return
     }
@@ -41,8 +42,8 @@ export class DashboardComponent implements OnInit {
     console.log(this.durationFormatted)
     console.log(minutes)
 
-    const newLog = new Log(this.task, minutes)
-    this.logs = this.storageService.addLog(newLog)
+    const newLog = new Log(this.task.name, minutes)
+    this.timeLoggingService.insertLog(newLog)
     this.durationFormatted = null
   }
 
@@ -55,22 +56,30 @@ export class DashboardComponent implements OnInit {
   }
 
 
-  newTask() {
-    const task = prompt("add task")
-    if (!task) {
-      this.task = "none"
+  async newTask() {
+    const taskName = prompt("add task")
+    if (!taskName) {
+      this.task = null
       return
     }
-    if (task === " ") {
+    if (taskName === " ") {
       this.snackBar.open("invalid task name", "OK", { duration: 5000 })
     }
-    this.storageService.addTask(task)
-    this.tasks = this.storageService.getTasks()
-    this.task = task
+
+    try {
+      const task = new Task("category1", taskName)
+      await this.timeLoggingService.insertTask(task)
+      this.tasks = await this.timeLoggingService.getTasks()
+      this.task = task
+    }
+    catch (ex) {
+      this.snackBar.open(ex.message, "OK", { duration: 5000 })
+      console.error(ex);
+    }
   }
 
-  list() {
-    const logs = this.storageService.getLogs()
+  async list() {
+    const logs = await this.timeLoggingService.getLogs()
     console.log(logs)
   }
 
@@ -79,7 +88,7 @@ export class DashboardComponent implements OnInit {
     localStorage.clear()
     this.tasks = []
     this.logs = []
-    this.task = "none"
+    this.task = null
     this.durationFormatted = null
   }
 

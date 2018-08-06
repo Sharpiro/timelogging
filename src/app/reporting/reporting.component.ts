@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Log } from '../shared/log';
+import { Log, Task } from '../shared/log';
 import { MatSnackBar } from '@angular/material';
-import { TableService } from '../shared/table.service';
+import { TimeloggingService } from '../shared/timelogging.service';
 
 @Component({
   selector: 'app-reporting',
@@ -9,17 +9,18 @@ import { TableService } from '../shared/table.service';
   styleUrls: ['./reporting.component.css']
 })
 export class ReportingComponent implements OnInit {
-  constructor(private snackBar: MatSnackBar, private tableService: TableService) { }
+  logs: Log[]
+  tasks: Task[]
+  constructor(private snackBar: MatSnackBar, private timeloggingService: TimeloggingService) { }
 
   async ngOnInit() {
     try {
-      // const tableCreateResult = await this.tableService.createTable(this.tableName)
+      this.logs = await this.timeloggingService.getLogs()
+      this.tasks = await this.timeloggingService.getTasks()
+      // const tableCreateResult = await this.tableService.createTable()
       // console.log(tableCreateResult)
 
-      const tableExistsResult = await this.tableService.tableExists()
-      if (!tableExistsResult) throw new Error(`table '${this.tableService.tableName}' does not exist @ '${this.tableService.url}`)
-
-      const originalLog = new Log("task1", 24)
+      // const originalLog = new Log("task1", 24)
 
       // const tableEntity = this.toTableEntity(originalLog)
       // console.log(tableEntity);
@@ -29,8 +30,8 @@ export class ReportingComponent implements OnInit {
 
       // await this.tableService.insertLog(this.tableName, originalLog)
       // const newLog = await this.tableService.getLog(this.tableName, "task1", "2018-08-05T16:04:28.387Z")
-      const newLog = await this.tableService.getLogs(undefined, 8)
-      console.log(newLog)
+      // const newLog = await this.tableService.getEntities(Log, undefined, 8)
+      // console.log(newLog)
 
       // setInterval(() => {
       //   console.log("interval...");

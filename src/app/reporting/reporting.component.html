@@ -1,3 +1,13 @@
-<p>
-  reporting works!
-</p>
+<h3>Tasks</h3>
+<div class="flex-container">
+  <ul>
+    <li class="listItem" *ngFor="let task of tasks">{{task.name}}: {{task.category}}: {{task.inverseMilliseconds}}: {{task.created.toISOString()}}</li>
+  </ul>
+</div>
+
+<h3>Logs</h3>
+<div class="flex-container">
+  <ul>
+    <li class="listItem" *ngFor="let log of logs">{{log.task}}: {{log.duration}}: {{log.createdDateISO}}: {{log.inverseMilliseconds}}: {{log.created.toISOString()}}</li>
+  </ul>
+</div>

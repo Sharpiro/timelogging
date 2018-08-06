@@ -16,7 +16,7 @@ export class StorageService {
     return logs
   }
 
-  addLog(log: Log): Log[] {
+  insertLog(log: Log): Log[] {
     const logs = this.getLogs()
     logs.unshift(log)
     localStorage.setItem(this.logsKey, JSON.stringify(logs))
@@ -29,7 +29,7 @@ export class StorageService {
     return tasks
   }
 
-  addTask(task: string) {
+  insertTask(task: string) {
     const tasks = this.getTasks()
     tasks.push(task)
     localStorage.setItem(this.tasksKey, JSON.stringify(tasks))

@@ -4,7 +4,7 @@
       <mat-select name="taskx" placeholder="Task" [(ngModel)]="task" (ngModelChange)="ngModelChange($event)">
         <mat-option value="none">None</mat-option>
         <mat-option *ngFor="let taskx of tasks" [value]="taskx">
-          {{taskx}}
+          {{taskx.name}}
         </mat-option>
         <mat-option value="addNew">Add New...</mat-option>
       </mat-select>
@@ -31,6 +31,6 @@
 
 <div class="flex-container">
   <ul>
-    <li class="listItem" *ngFor="let log of logs">{{log.task}}: {{log.duration}}: {{log.timeStampUtc}}</li>
+    <li class="listItem" *ngFor="let log of logs">{{log.task}}: {{log.duration}}: {{log.createdDateISO}}</li>
   </ul>
 </div>

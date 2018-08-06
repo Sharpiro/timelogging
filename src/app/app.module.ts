@@ -11,13 +11,26 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { ReportingComponent } from './reporting/reporting.component';
 import { TableService } from './shared/table.service';
 import * as azure from '../assets/js/azure-storage.table';
+import { TimeloggingService } from './shared/timelogging.service';
+import { environment } from '../environments/environment';
 
+const timeloggingServiceFactory: () => TimeloggingService = () => {
+  const tasksTableName = "tasks"
+  const logsTableName = "logs"
+  // const connectionString = "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;"
+  // const connectionString = "DefaultEndpointsProtocol=https;AccountName=timelogging;AccountKey=KMWJ8nhwE1RAlw+o0/wyytD/t8lp2SPF0CYZLiiW5sEGijCBxaCh8ZLWfwH2oMp8oUHA6DZnFx3hvM6/9q/k4Q==;EndpointSuffix=core.windows.net"
+  // const connectionString = azure.generateDevelopmentStorageCredentials()
+  const connectionString = environment.connectionString
+  console.log(connectionString);
 
-const tableServiceFactory = () => {
-  const tableName = "timelogging"
-  const devCredentials = azure.generateDevelopmentStorageCredentials()
-  const tableService = azure.createTableService(devCredentials)
-  return new TableService(tableName, tableService)
+  const tableService = azure.createTableService(connectionString)
+
+  if (environment.production) {
+
+  }
+  const tasksTableService = new TableService(tasksTableName, tableService)
+  const logsTableService = new TableService(logsTableName, tableService)
+  return new TimeloggingService(tasksTableService, logsTableService)
 }
 
 @NgModule({
@@ -43,7 +56,7 @@ const tableServiceFactory = () => {
     MatToolbarModule
   ],
   providers: [
-    { provide: TableService, useFactory: tableServiceFactory }
+    { provide: TimeloggingService, useFactory: timeloggingServiceFactory }
   ],
   bootstrap: [AppComponent]
 })

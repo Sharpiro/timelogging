@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as azure from '../../assets/js/azure-storage.table';
-import { Log, TableEntity } from './log';
+import { TableEntity } from './log';
 import { nameof } from './type-functions';
 
 @Injectable({
@@ -13,7 +13,7 @@ export class TableService {
   public get tableName(): string {
     return this._tableName
   }
-  public get url(): string {
+  public get tableUrl(): string {
     return this.tableService.getUrl(this._tableName)
   }
 
@@ -24,7 +24,7 @@ export class TableService {
 
   async tableExists(): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.tableService.doesTableExist(this.tableName, (error, result, response) => {
+      this.tableService.doesTableExist(this.tableName, (error, result) => {
         if (!error) {
           resolve(result.exists)
         }
@@ -37,7 +37,7 @@ export class TableService {
 
   async createTable(): Promise<azure.TableService.TableResult> {
     return new Promise<azure.TableService.TableResult>((resolve, reject) => {
-      this.tableService.createTableIfNotExists(this.tableName, function (error, result, response) {
+      this.tableService.createTableIfNotExists(this.tableName, function (error, result) {
         if (!error) {
           resolve(result)
         }
@@ -48,10 +48,10 @@ export class TableService {
     })
   }
 
-  async insertLog(log: Readonly<Log>): Promise<void> {
-    const tableEntityLog = this.toTableEntity(log)
+  async insertEntity<T>(entity: Readonly<T>): Promise<void> {
+    const tableEntity = this.toTableEntity(entity)
     return new Promise<void>((resolve, reject) => {
-      this.tableService.insertEntity(this.tableName, tableEntityLog, function (error, result, response) {
+      this.tableService.insertEntity(this.tableName, tableEntity, function (error) {
         if (!error) {
           resolve()
         }
@@ -62,14 +62,14 @@ export class TableService {
     })
   }
 
-  async getLog(partitionKey: string, rowKey: string): Promise<Log> {
+  async getEntity<T>(type: new () => T, partitionKey: string, rowKey: string): Promise<T> {
     const classInstance = this
-    return new Promise<Log>((resolve, reject) => {
-      this.tableService.retrieveEntity(this.tableName, partitionKey, rowKey, function (error, result, response) {
+    return new Promise<T>((resolve, reject) => {
+      this.tableService.retrieveEntity(this.tableName, partitionKey, rowKey, function (error, result) {
         if (!error) {
           const tableEntity = classInstance.fromTableObject(result)
-          const log = classInstance.fromTableEntity(tableEntity, Log)
-          resolve(log)
+          const entity = classInstance.fromTableEntity(tableEntity, type)
+          resolve(entity)
         }
         else {
           reject(error)
@@ -78,9 +78,9 @@ export class TableService {
     })
   }
 
-  async getLogs(partitionKey?: string, take?: number): Promise<Log[]> {
+  async getEntities<T>(type: new () => T, partitionKey?: string, take?: number): Promise<T[]> {
     const classInstance = this
-    return new Promise<any[]>((resolve, reject) => {
+    return new Promise<T[]>((resolve, reject) => {
       let query = new azure.TableQuery()
       if (partitionKey) {
         query = query.where('PartitionKey eq ?', partitionKey);
@@ -89,12 +89,12 @@ export class TableService {
         query = query.top(take);
       }
 
-      this.tableService.queryEntities(this.tableName, query, null, function (error, result, response) {
+      this.tableService.queryEntities(this.tableName, query, null, function (error, result) {
         if (!error) {
-          const logs = result.entries
+          const entities = result.entries
             .map(classInstance.fromTableObject)
-            .map(te => classInstance.fromTableEntity(te, Log))
-          resolve(logs)
+            .map(te => classInstance.fromTableEntity(te, type))
+          resolve(entities)
         }
         else {
           reject(error)
@@ -111,6 +111,9 @@ export class TableService {
 
     let tableEntity: any = {}
     for (let id in obj) {
+      const propertyDescriptor = Object.getOwnPropertyDescriptor(obj, id)
+      if (!propertyDescriptor) continue
+      
       if (id == partitionKey) {
         tableEntity[nameof<TableEntity>("PartitionKey")] = obj[id];
       }
@@ -145,6 +148,9 @@ export class TableService {
         instance[rowKey] = tableEntity[id];
       }
       else {
+        // const temp = Object.getOwnPropertyDescriptor(tableEntity, id)
+        // console.log(temp);
+
         instance[id] = tableEntity[id];
       }
     }
@@ -161,18 +167,5 @@ export class TableService {
       newObj[id] = obj[id]._;
     }
     return <any>newObj
-  }
-
-  private createIntersection<T, U>(first: T, second: U): T & U {
-    let result = <T & U>{};
-    for (let id in first) {
-      (<any>result)[id] = (<any>first)[id];
-    }
-    for (let id in second) {
-      if (!result.hasOwnProperty(id)) {
-        (<any>result)[id] = (<any>second)[id];
-      }
-    }
-    return result;
   }
 }
