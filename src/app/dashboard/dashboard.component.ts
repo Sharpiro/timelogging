@@ -1,7 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-import { MatSnackBar } from '@angular/material';
+import { Component, OnInit, Inject } from '@angular/core';
+import { MatSnackBar, MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { Log, Task } from '../shared/log';
 import { TimeloggingService } from '../shared/timelogging.service';
+import { AddTaskDialogComponent } from './add-task-dialog/add-task-dialog.component';
+import { FormControl } from '@angular/forms';
+
+
 
 @Component({
   selector: 'app-dashboard',
@@ -16,7 +20,7 @@ export class DashboardComponent implements OnInit {
   logs: Log[]
 
   // constructor(public snackBar: MatSnackBar, private storageService: StorageService) { }
-  constructor(public snackBar: MatSnackBar, private timeLoggingService: TimeloggingService) { }
+  constructor(public snackBar: MatSnackBar, public dialog: MatDialog, private timeLoggingService: TimeloggingService) { }
 
   async ngOnInit() {
     this.tasks = await this.timeLoggingService.getTasks()
@@ -25,7 +29,7 @@ export class DashboardComponent implements OnInit {
 
   ngModelChange(event) {
     if (event != "addNew") return
-    this.newTask();
+    this.newTask()
   }
 
   submit() {
@@ -48,34 +52,32 @@ export class DashboardComponent implements OnInit {
   }
 
   debug() {
-    // const snackRef = this.snackBar.open("message", "action", { duration: 10000 })
-    this.snackBar.open("message", "OK", { duration: 5000 })
-    // snackRef.onAction().subscribe(v => {
-    //   console.log("action clicked")
-    // })
+    this.newTask()
   }
 
 
   async newTask() {
-    const taskName = prompt("add task")
-    if (!taskName) {
-      this.task = null
-      return
-    }
-    if (taskName === " ") {
-      this.snackBar.open("invalid task name", "OK", { duration: 5000 })
-    }
-
-    try {
-      const task = new Task("category1", taskName)
+    const dialogRef = this.dialog.open(AddTaskDialogComponent, {
+      width: "400px",
+      data: {
+        categories: ["cat1", "cat2", "cat3"]
+      }
+    })
+    dialogRef.afterClosed().subscribe(async (task: Task) => {
+      if (!task) return
       await this.timeLoggingService.insertTask(task)
       this.tasks = await this.timeLoggingService.getTasks()
       this.task = task
-    }
-    catch (ex) {
-      this.snackBar.open(ex.message, "OK", { duration: 5000 })
-      console.error(ex);
-    }
+      console.log(task)
+    });
+
+    // try {
+
+    // }
+    // catch (ex) {
+    //   this.snackBar.open(ex.message, "OK", { duration: 5000 })
+    //   console.error(ex);
+    // }
   }
 
   async list() {
@@ -100,5 +102,4 @@ export class DashboardComponent implements OnInit {
     }
     return temp
   }
-
 }

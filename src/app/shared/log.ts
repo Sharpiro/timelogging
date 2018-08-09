@@ -43,16 +43,15 @@ export class Log extends DateEntity {
 }
 
 export class Task extends DateEntity {
-    // name: string
     @tableKey("partition") readonly category: string
-    // @tableKey("row") createdDateISO: string;
     @tableKey("row") readonly name: string;
     readonly inverseMilliseconds: string;
     readonly status = TaskStatus.NotStarted
+    readonly weeklyGoalMinutes: number
 
     constructor();
-    constructor(category: string, name: string, createdDate?: Date);
-    constructor(category?: string, name?: string, createdDate = new Date()) {
+    constructor(category: string, name: string, weeklyGoalMinutes: number, createdDate?: Date);
+    constructor(category?: string, name?: string, weeklyGoalMinutes?: number, createdDate = new Date()) {
         super()
         this.category = category
         this.name = name

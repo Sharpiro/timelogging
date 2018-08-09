@@ -2,9 +2,9 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppComponent } from './app.component';
-import { MatButtonModule, MatCheckboxModule, MatFormFieldModule, MatOptionModule, MatSelectModule, MatSidenavModule, MatIconModule, MatToolbarModule } from '@angular/material';
+import { MatButtonModule, MatCheckboxModule, MatFormFieldModule, MatOptionModule, MatSelectModule, MatSidenavModule, MatIconModule, MatToolbarModule, MatDialogModule, ErrorStateMatcher, ShowOnDirtyErrorStateMatcher } from '@angular/material';
 import { MatInputModule } from '@angular/material/input';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AppRoutingModule } from './app-routing.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
@@ -13,6 +13,7 @@ import { TableService } from './shared/table.service';
 import * as azure from '../assets/js/azure-storage.table';
 import { TimeloggingService } from './shared/timelogging.service';
 import { environment } from '../environments/environment';
+import { AddTaskDialogComponent } from './dashboard/add-task-dialog/add-task-dialog.component';
 
 const timeloggingServiceFactory: () => TimeloggingService = () => {
   const tasksTableName = "tasks"
@@ -37,7 +38,8 @@ const timeloggingServiceFactory: () => TimeloggingService = () => {
   declarations: [
     AppComponent,
     DashboardComponent,
-    ReportingComponent
+    ReportingComponent,
+    AddTaskDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -53,11 +55,15 @@ const timeloggingServiceFactory: () => TimeloggingService = () => {
     MatSnackBarModule,
     MatSidenavModule,
     MatIconModule,
-    MatToolbarModule
+    MatToolbarModule,
+    MatDialogModule,
+    ReactiveFormsModule
   ],
   providers: [
-    { provide: TimeloggingService, useFactory: timeloggingServiceFactory }
+    { provide: TimeloggingService, useFactory: timeloggingServiceFactory },
+    {provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher}
   ],
+  entryComponents: [AddTaskDialogComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
