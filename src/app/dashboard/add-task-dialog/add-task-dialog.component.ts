@@ -36,7 +36,10 @@ export class AddTaskDialogComponent implements OnInit {
     if (this.nameFormControl.invalidOrEmpty || this.categoryFormControl.invalidOrEmpty || this.weeklyMinutesFormControl.invalidOrEmpty)
       return
 
-    const task = new Task(this.categoryFormControl.value, this.nameFormControl.value, this.weeklyMinutesFormControl.value)
+    const weeklyMinutesGoal = +this.weeklyMinutesFormControl.value
+    if (isNaN(weeklyMinutesGoal)) throw new Error("Unable to parse weekly minutes")
+    
+    const task = new Task(this.categoryFormControl.value, this.nameFormControl.value, weeklyMinutesGoal)
     this.dialogRef.close(task);
   }
 }

@@ -55,6 +55,7 @@ export class Task extends DateEntity {
         super()
         this.category = category
         this.name = name
+        this.weeklyGoalMinutes = weeklyGoalMinutes
         this.inverseMilliseconds = this.toInverseMilliseconds(createdDate)
     }
 }
@@ -69,6 +70,25 @@ export class Category extends DateEntity {
         super()
         this.name = name
         this.inverseMilliseconds = this.toInverseMilliseconds(createdDate)
+    }
+}
+
+export class TaskProgress {
+    name: string
+    weeklyGoalMinutes: number
+    completedMinutes: number
+    status: TaskStatus
+
+    public get remainingMinutes(): number {
+        const remaining = this.weeklyGoalMinutes - this.completedMinutes
+        return remaining >= 0 ? remaining : 0
+    }
+
+    constructor(taskName: string, weeklyGoalMinutes: number, completedMinutes: number, status?: TaskStatus) {
+        this.name = taskName
+        this.weeklyGoalMinutes = weeklyGoalMinutes
+        this.completedMinutes = completedMinutes
+        this.status = status
     }
 }
 

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Log, Task } from './log';
+import { Log, Task, TaskProgress } from './log';
 import { TableService } from './table.service';
+import { nameof } from './type-functions';
 
 @Injectable({
     providedIn: 'root'
@@ -54,4 +55,47 @@ export class TimeloggingService {
     async getTasks(category?: string, take?: number): Promise<Task[]> {
         return this.tasksTableService.getEntities(Task, category, take)
     }
+
+    getWeeklyProgress(tasks: Task[], logs: Log[]): TaskProgress[] {
+        const grouping = this.groupBy(nameof<Log>("task"), logs)
+        const tasksProgression = grouping.map(gOfL => {
+            const task = tasks.filter(t => t.name === gOfL.key)[0]
+            if (!task) throw new Error(`could not find task '${task.name}' for given log`)
+            if (!task.weeklyGoalMinutes) throw new Error("unable to calculate weeklyGoalMinutes")
+
+            const completedMinutesReduction = gOfL.value.reduce((prev, curr) => {
+                return { duration: prev.duration + curr.duration }
+            }, { duration: 0 })
+
+            return new TaskProgress(gOfL.key, task.weeklyGoalMinutes, completedMinutesReduction.duration,
+                task.status)
+        })
+        return tasksProgression
+    }
+
+    private groupBy<TValue>(key: string, items: TValue[]): Grouping<TValue>[] {
+        const initial = items.reduce<GroupingInitial<TValue>>((groupingProgress, curr) => {
+            if (!groupingProgress[curr[key]]) {
+                groupingProgress[curr[key]] = []
+            }
+            groupingProgress[curr[key]].push(curr)
+
+            return groupingProgress
+        }, {})
+
+        var final: Grouping<TValue>[] = []
+        for (const key in initial) {
+            final.push({ key: key, value: initial[key] })
+        }
+        return final
+    }
+}
+
+class GroupingInitial<TValue> {
+    [key: string]: TValue[]
+}
+
+export class Grouping<TValue> {
+    key: string
+    value: TValue[]
 }

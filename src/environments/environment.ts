@@ -4,7 +4,9 @@
 
 export const environment = {
   production: false,
-  connectionString: "UseDevelopmentStorage=true;"
+  connectionString: "UseDevelopmentStorage=true;",
+  tasksTableName: "tasks",
+  logsTableName: "logs"
 };
 
 /*

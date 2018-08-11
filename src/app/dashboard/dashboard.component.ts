@@ -3,9 +3,6 @@ import { MatSnackBar, MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/
 import { Log, Task } from '../shared/log';
 import { TimeloggingService } from '../shared/timelogging.service';
 import { AddTaskDialogComponent } from './add-task-dialog/add-task-dialog.component';
-import { FormControl } from '@angular/forms';
-
-
 
 @Component({
   selector: 'app-dashboard',
@@ -19,12 +16,10 @@ export class DashboardComponent implements OnInit {
   tasks: Task[]
   logs: Log[]
 
-  // constructor(public snackBar: MatSnackBar, private storageService: StorageService) { }
   constructor(public snackBar: MatSnackBar, public dialog: MatDialog, private timeLoggingService: TimeloggingService) { }
 
   async ngOnInit() {
     this.tasks = await this.timeLoggingService.getTasks()
-    // this.logs = this.storageService.getLogs()
   }
 
   ngModelChange(event) {

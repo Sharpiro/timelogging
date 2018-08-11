@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppComponent } from './app.component';
-import { MatButtonModule, MatCheckboxModule, MatFormFieldModule, MatOptionModule, MatSelectModule, MatSidenavModule, MatIconModule, MatToolbarModule, MatDialogModule, ErrorStateMatcher, ShowOnDirtyErrorStateMatcher } from '@angular/material';
+import { MatButtonModule, MatCheckboxModule, MatFormFieldModule, MatOptionModule, MatSelectModule, MatSidenavModule, MatIconModule, MatToolbarModule, MatDialogModule, ErrorStateMatcher, ShowOnDirtyErrorStateMatcher, MatTabsModule, MatDividerModule, MatListModule, MatTableModule } from '@angular/material';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
@@ -16,21 +16,10 @@ import { environment } from '../environments/environment';
 import { AddTaskDialogComponent } from './dashboard/add-task-dialog/add-task-dialog.component';
 
 const timeloggingServiceFactory: () => TimeloggingService = () => {
-  const tasksTableName = "tasks"
-  const logsTableName = "logs"
-  // const connectionString = "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;"
-  // const connectionString = "DefaultEndpointsProtocol=https;AccountName=timelogging;AccountKey=KMWJ8nhwE1RAlw+o0/wyytD/t8lp2SPF0CYZLiiW5sEGijCBxaCh8ZLWfwH2oMp8oUHA6DZnFx3hvM6/9q/k4Q==;EndpointSuffix=core.windows.net"
-  // const connectionString = azure.generateDevelopmentStorageCredentials()
-  const connectionString = environment.connectionString
-  console.log(connectionString);
-
-  const tableService = azure.createTableService(connectionString)
-
-  if (environment.production) {
-
-  }
-  const tasksTableService = new TableService(tasksTableName, tableService)
-  const logsTableService = new TableService(logsTableName, tableService)
+  console.log(environment.connectionString);
+  const tableService = azure.createTableService(environment.connectionString)
+  const tasksTableService = new TableService(environment.tasksTableName, tableService)
+  const logsTableService = new TableService(environment.logsTableName, tableService)
   return new TimeloggingService(tasksTableService, logsTableService)
 }
 
@@ -57,11 +46,13 @@ const timeloggingServiceFactory: () => TimeloggingService = () => {
     MatIconModule,
     MatToolbarModule,
     MatDialogModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatTabsModule,
+    MatTableModule
   ],
   providers: [
     { provide: TimeloggingService, useFactory: timeloggingServiceFactory },
-    {provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher}
+    { provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher }
   ],
   entryComponents: [AddTaskDialogComponent],
   bootstrap: [AppComponent]
