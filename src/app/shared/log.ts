@@ -74,20 +74,22 @@ export class Category extends DateEntity {
 }
 
 export class TaskProgress {
-    name: string
+    taskName: string
     weeklyGoalMinutes: number
-    completedMinutes: number
+    weeklyCompletedMinutes: number
+    allCompletedMinutes: number
     status: TaskStatus
 
-    public get remainingMinutes(): number {
-        const remaining = this.weeklyGoalMinutes - this.completedMinutes
+    public get remainingWeeklyMinutes(): number {
+        if (this.status === TaskStatus.Done || this.status === TaskStatus.Paused) return 0
+        const remaining = this.weeklyGoalMinutes - this.weeklyCompletedMinutes
         return remaining >= 0 ? remaining : 0
     }
 
     constructor(taskName: string, weeklyGoalMinutes: number, completedMinutes: number, status?: TaskStatus) {
-        this.name = taskName
+        this.taskName = taskName
         this.weeklyGoalMinutes = weeklyGoalMinutes
-        this.completedMinutes = completedMinutes
+        this.weeklyCompletedMinutes = completedMinutes
         this.status = status
     }
 }

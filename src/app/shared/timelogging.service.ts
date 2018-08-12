@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Log, Task, TaskProgress } from './log';
 import { TableService } from './table.service';
 import { nameof } from './type-functions';
+import { MondayStartUTCDate } from './UTCDate';
 
 @Injectable({
     providedIn: 'root'
@@ -57,6 +58,8 @@ export class TimeloggingService {
     }
 
     getWeeklyProgress(tasks: Task[], logs: Log[]): TaskProgress[] {
+        const [start, stop] = this.getCurrentWeekRange()
+
         const grouping = this.groupBy(nameof<Log>("task"), logs)
         const tasksProgression = grouping.map(gOfL => {
             const task = tasks.filter(t => t.name === gOfL.key)[0]
@@ -71,6 +74,22 @@ export class TimeloggingService {
                 task.status)
         })
         return tasksProgression
+    }
+
+    private getCurrentWeekRange(): [number, number] {
+        // const date = new Date(2018, 7, 12)
+        // // const date = new Date()
+        // console.log(date)
+        // console.log(date.getDay());
+
+        const specialDate = new MondayStartUTCDate(2018)
+        // const specialDate = new MondayStartUTCDate()
+
+        console.log(specialDate)
+        console.log(specialDate.getDay());
+
+
+        return [1, 2]
     }
 
     private groupBy<TValue>(key: string, items: TValue[]): Grouping<TValue>[] {
