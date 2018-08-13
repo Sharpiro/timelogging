@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as azure from '../../assets/js/azure-storage.table';
-import { TableEntity } from './log';
 import { nameof } from './type-functions';
+import { TableEntity } from './models/model-helpers';
 
 // @Injectable({
 //   providedIn: 'root'

@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { Log, Task, TaskProgress } from '../shared/log';
 import { MatSnackBar } from '@angular/material';
 import { TimeloggingService } from '../shared/timelogging.service';
+import { Log } from '../shared/models/log';
+import { Task } from '../shared/models/task';
+import { TaskProgress } from '../shared/models/task-progress';
 
 @Component({
   selector: 'app-reporting',

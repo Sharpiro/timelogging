@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { Task } from '../../shared/log';
 import { FormControl, Validators } from '@angular/forms';
+import { Task } from '../../shared/models/task';
 
 export class CustomFormControl extends FormControl {
   get invalidOrEmpty(): boolean {

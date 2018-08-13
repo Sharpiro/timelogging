@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Log, Task, TaskProgress } from './log';
 import { TableService } from './table.service';
 import { nameof } from './type-functions';
 import { MondayStartUTCDate } from './UTCDate';
+import { Log } from './models/log';
+import { Task } from './models/task';
+import { TaskProgress } from './models/task-progress';
 
 @Injectable({
     providedIn: 'root'

@@ -1,8 +1,9 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatSnackBar, MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
-import { Log, Task } from '../shared/log';
 import { TimeloggingService } from '../shared/timelogging.service';
 import { AddTaskDialogComponent } from './add-task-dialog/add-task-dialog.component';
+import { Task } from '../shared/models/task';
+import { Log } from '../shared/models/log';
 
 @Component({
   selector: 'app-dashboard',
