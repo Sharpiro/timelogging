@@ -78,20 +78,25 @@ export class TimeloggingService {
         return tasksProgression
     }
 
-    private getCurrentWeekRange(): [number, number] {
+    private getCurrentWeekRange(): [MondayStartUTCDate, MondayStartUTCDate] {
         // const date = new Date(2018, 7, 12)
         // // const date = new Date()
         // console.log(date)
         // console.log(date.getDay());
+        // const now = new MondayStartUTCDate(2018, 7, 14, 15, 6, 0, 0)
+        // const now = new MondayStartUTCDate(2018, 7, 14, 0, 0, 0, 0)
+        // const now = new MondayStartUTCDate(2018, 7, 14, 0, 0, 0, 1)
+        // const now = new MondayStartUTCDate(2018, 7, 13, 23, 59, 59, 999)
+        const now = new MondayStartUTCDate()
 
-        const specialDate = new MondayStartUTCDate(2018)
-        // const specialDate = new MondayStartUTCDate()
+        console.log(now)
+        console.log(now.getDay());
+        console.log(now.toISOString());
+        console.log(now.getWeekStart());
+        console.log(now.getWeekStart().toISOString());
 
-        console.log(specialDate)
-        console.log(specialDate.getDay());
 
-
-        return [1, 2]
+        return [now.getWeekStart(), now.getWeekStart()]
     }
 
     private groupBy<TValue>(key: string, items: TValue[]): Grouping<TValue>[] {

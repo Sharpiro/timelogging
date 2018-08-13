@@ -1,13 +1,41 @@
 export class MondayStartUTCDate {
-    private date: Date
+    private adjustedDate: Date
 
+    constructor()
+    constructor(year: number, month: number, date: number)
+    constructor(year: number, month: number, date: number, hours: number, minutes: number, seconds: number, ms: number)
     constructor(year?: number, month?: number, date?: number, hours?: number, minutes?: number, seconds?: number, ms?: number) {
-        this.date = new Date(year, month, date, hours, minutes, seconds, ms)
+        let historicalDate: Date
+        if (hours !== undefined) historicalDate = new Date(year, month, date, hours, minutes, seconds, ms)
+        else if (year !== undefined) historicalDate = new Date(year, month, date)
+
+        if (!historicalDate) {
+            this.adjustedDate = new Date()
+            return
+        }
+
+        const utcOffsetMs = historicalDate.getTimezoneOffset() * 60 * 1000
+        const historicalDateMs = historicalDate.getTime()
+        this.adjustedDate = new Date(historicalDateMs - utcOffsetMs)
     }
 
     getDay(): number {
-        const modifiedDay = this.date.getDay() - 1
-        return modifiedDay > 0 ? modifiedDay : 6
+        const day = this.adjustedDate.getDay()
+        const modifiedDay = day - 1
+        return modifiedDay >= 0 ? modifiedDay : 6
+    }
+
+    getWeekStart(): MondayStartUTCDate {
+        const daysSinceWeekStart = this.getDay()
+        const daysSinceWeekStartMs = daysSinceWeekStart * 24 * 60 * 60 * 1000
+        const dateTime = this.adjustedDate.getTime()
+        const weekStart = new Date(dateTime - daysSinceWeekStartMs)
+        const weekStartUTC = new MondayStartUTCDate(weekStart.getFullYear(), weekStart.getMonth(), weekStart.getDate())
+        return weekStartUTC
+    }
+
+    toISOString(): string {
+        return this.adjustedDate.toISOString()
     }
 
     static create(): MondayStartUTCDate {
