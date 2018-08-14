@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { TableService } from './table.service';
 import { nameof } from './type-functions';
-import { MondayStartUTCDate } from './UTCDate';
 import { Log } from './models/log';
 import { Task } from './models/task';
 import { TaskProgress } from './models/task-progress';
+import { MondayStartUTCDate, MondayStartDate } from './monday-start-utc-date';
 
 @Injectable({
     providedIn: 'root'
@@ -78,7 +78,7 @@ export class TimeloggingService {
         return tasksProgression
     }
 
-    private getCurrentWeekRange(): [MondayStartUTCDate, MondayStartUTCDate] {
+    private getCurrentWeekRange(): [MondayStartDate, MondayStartDate] {
         // const date = new Date(2018, 7, 12)
         // // const date = new Date()
         // console.log(date)
@@ -87,16 +87,17 @@ export class TimeloggingService {
         // const now = new MondayStartUTCDate(2018, 7, 14, 0, 0, 0, 0)
         // const now = new MondayStartUTCDate(2018, 7, 14, 0, 0, 0, 1)
         // const now = new MondayStartUTCDate(2018, 7, 13, 23, 59, 59, 999)
-        const now = new MondayStartUTCDate()
+        const now = new MondayStartDate()
 
         console.log(now)
-        console.log(now.getDay());
-        console.log(now.toISOString());
-        console.log(now.getWeekStart());
-        console.log(now.getWeekStart().toISOString());
+        console.log(now.dayOfTheWeek);
+        console.log(now.isoString);
+        console.log(now.weekStart.isoString);
+        console.log(now.weekEnd);
+        console.log(now.weekEnd.isoString);
 
 
-        return [now.getWeekStart(), now.getWeekStart()]
+        return [now.weekStart, now.weekEnd]
     }
 
     private groupBy<TValue>(key: string, items: TValue[]): Grouping<TValue>[] {
