@@ -6,7 +6,8 @@ export const environment = {
   production: false,
   connectionString: "UseDevelopmentStorage=true;",
   tasksTableName: "tasks",
-  logsTableName: "logs"
+  logsTableName: "logs",
+  categoriesTableName: "categories"
 };
 
 /*

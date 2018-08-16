@@ -1,28 +1,26 @@
 <mat-tab-group>
 
   <mat-tab label="Progress">
-
     <table mat-table [dataSource]="taskProgress" class="mat-elevation-z8">
-
       <ng-container matColumnDef="taskName">
         <th mat-header-cell *matHeaderCellDef> taskName </th>
         <td mat-cell *matCellDef="let taskProgress"> {{taskProgress.taskName}} </td>
       </ng-container>
 
       <ng-container matColumnDef="weeklyRemaining">
-          <th mat-header-cell *matHeaderCellDef> weeklyRemaining </th>
-          <td mat-cell *matCellDef="let taskProgress"> {{taskProgress.remainingWeeklyMinutes}} </td>
-        </ng-container>
+        <th mat-header-cell *matHeaderCellDef> weeklyRemaining </th>
+        <td mat-cell *matCellDef="let taskProgress"> {{taskProgress.remainingWeeklyMinutes}} </td>
+      </ng-container>
 
-        <ng-container matColumnDef="weeklyCompletedMinutes">
-          <th mat-header-cell *matHeaderCellDef> weeklyCompletedMinutes </th>
-          <td mat-cell *matCellDef="let taskProgress"> {{taskProgress.weeklyCompletedMinutes}} </td>
-        </ng-container>
+      <ng-container matColumnDef="weeklyCompletedMinutes">
+        <th mat-header-cell *matHeaderCellDef> weeklyCompletedMinutes </th>
+        <td mat-cell *matCellDef="let taskProgress"> {{taskProgress.weeklyCompletedMinutes}} </td>
+      </ng-container>
 
-        <ng-container matColumnDef="totalCompletedMinutes">
-          <th mat-header-cell *matHeaderCellDef> totalCompletedMinutes </th>
-          <td mat-cell *matCellDef="let taskProgress"> {{taskProgress.totalCompletedMinutes}} </td>
-        </ng-container>
+      <ng-container matColumnDef="totalCompletedMinutes">
+        <th mat-header-cell *matHeaderCellDef> totalCompletedMinutes </th>
+        <td mat-cell *matCellDef="let taskProgress"> {{taskProgress.totalCompletedMinutes}} </td>
+      </ng-container>
 
       <ng-container matColumnDef="goal">
         <th mat-header-cell *matHeaderCellDef> goal </th>
@@ -36,15 +34,11 @@
 
       <tr mat-header-row *matHeaderRowDef="taskProgressColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: taskProgressColumns;"></tr>
-
     </table>
-
   </mat-tab>
 
   <mat-tab label="Logs">
-
     <table mat-table [dataSource]="logs" class="mat-elevation-z8">
-
       <ng-container matColumnDef="task">
         <th mat-header-cell *matHeaderCellDef> task </th>
         <td mat-cell *matCellDef="let log"> {{log.task}} </td>
@@ -61,20 +55,15 @@
 
       <tr mat-header-row *matHeaderRowDef="logsColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: logsColumns;"></tr>
-
     </table>
-
   </mat-tab>
 
   <mat-tab label="Tasks">
-
     <table mat-table [dataSource]="tasks" class="mat-elevation-z8">
-
       <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef> name </th>
         <td mat-cell *matCellDef="let task"> {{task.name}} </td>
       </ng-container>
-
 
       <ng-container matColumnDef="weeklyGoalMinutes">
         <th mat-header-cell *matHeaderCellDef> weeklyGoalMinutes </th>
@@ -97,10 +86,26 @@
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="tasksColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: tasksColumns;"></tr>
-
+      <tr mat-row *matRowDef="let row; columns: tasksColumns;" (dblclick)="editTask(row)"></tr>
     </table>
+  </mat-tab>
 
+  <mat-tab label="Categories">
+    <table mat-table [dataSource]="categories" class="mat-elevation-z8">
+
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> name </th>
+        <td mat-cell *matCellDef="let category"> {{category.name}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="createdDateISO">
+        <th mat-header-cell *matHeaderCellDef> createdDateISO </th>
+        <td mat-cell *matCellDef="let category"> {{category.created.isoString}} </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="categoriesColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: categoriesColumns;"></tr>
+    </table>
   </mat-tab>
 
 </mat-tab-group>

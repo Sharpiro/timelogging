@@ -1,4 +1,4 @@
-import { TaskStatus } from "./model-helpers";
+import { TaskStatus } from "./task";
 
 export class TaskProgress {
     taskName: string

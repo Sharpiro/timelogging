@@ -8,11 +8,3 @@ export const tableKey = (decoratorName: "partition" | "row") => {
         Reflect.defineMetadata(decoratorName, key, target)
     }
 }
-
-
-export enum TaskStatus {
-    NotStarted,
-    InProgress,
-    Paused,
-    Done
-}

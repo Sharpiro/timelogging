@@ -21,9 +21,11 @@ export class AppComponent implements OnInit {
     try {
       const tasksTableExistPromise = await this.timeloggingService.tasksTablesExists()
       const logsTableExistsPromise = await this.timeloggingService.logsTablesExists()
+      const categoriesTableExistsPromise = await this.timeloggingService.categoriesTablesExists()
 
       if (!(await tasksTableExistPromise)) throw new Error(`table '${this.timeloggingService.tasksTableName}' does not exist @ '${this.timeloggingService.tasksTableUrl}`)
       if (!(await logsTableExistsPromise)) throw new Error(`table '${this.timeloggingService.logsTableName}' does not exist @ '${this.timeloggingService.logsTableUrl}`)
+      if (!(await categoriesTableExistsPromise)) throw new Error(`table '${this.timeloggingService.categoriesTableName}' does not exist @ '${this.timeloggingService.categoriesTableUrl}`)
     } catch (ex) {
       this.snackBar.open(ex.message, undefined, { duration: 5000 })
       console.error(ex)

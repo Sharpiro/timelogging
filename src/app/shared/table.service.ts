@@ -1,11 +1,7 @@
-import { Injectable } from '@angular/core';
 import * as azure from '../../assets/js/azure-storage.table';
 import { nameof } from './type-functions';
 import { TableEntity } from './models/model-helpers';
 
-// @Injectable({
-//   providedIn: 'root'
-// })
 export class TableService {
   private tableService: azure.TableService
   private _tableName: string
@@ -52,6 +48,20 @@ export class TableService {
     const tableEntity = this.toTableEntity(entity)
     return new Promise<void>((resolve, reject) => {
       this.tableService.insertEntity(this.tableName, tableEntity, function (error) {
+        if (!error) {
+          resolve()
+        }
+        else {
+          reject(error)
+        }
+      })
+    })
+  }
+
+  async updateEntity<T>(entity: Readonly<T>): Promise<void> {
+    const tableEntity = this.toTableEntity(entity)
+    return new Promise<void>((resolve, reject) => {
+      this.tableService.mergeEntity(this.tableName, tableEntity, function (error) {
         if (!error) {
           resolve()
         }
@@ -113,7 +123,7 @@ export class TableService {
     for (let id in obj) {
       const propertyDescriptor = Object.getOwnPropertyDescriptor(obj, id)
       if (!propertyDescriptor) continue
-      
+
       if (id == partitionKey) {
         tableEntity[nameof<TableEntity>("PartitionKey")] = obj[id];
       }
@@ -148,9 +158,6 @@ export class TableService {
         instance[rowKey] = tableEntity[id];
       }
       else {
-        // const temp = Object.getOwnPropertyDescriptor(tableEntity, id)
-        // console.log(temp);
-
         instance[id] = tableEntity[id];
       }
     }
@@ -162,7 +169,7 @@ export class TableService {
   }
 
   private fromTableObject(obj: any): TableEntity {
-    let newObj = {}
+    const newObj = {}
     for (let id in obj) {
       newObj[id] = obj[id]._;
     }

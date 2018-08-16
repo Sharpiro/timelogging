@@ -5,25 +5,33 @@ import { Log } from './models/log';
 import { Task } from './models/task';
 import { TaskProgress } from './models/task-progress';
 import { MondayStartDate } from './monday-start-date';
+import { Category } from './category';
 
 @Injectable({
     providedIn: 'root'
 })
 export class TimeloggingService {
-    public get tasksTableName(): string {
+    get tasksTableName(): string {
         return this.tasksTableService.tableName
     }
-    public get logsTableName(): string {
+    get logsTableName(): string {
         return this.logsTableService.tableName
     }
-    public get tasksTableUrl(): string {
+    get categoriesTableName(): string {
+        return this.categoriesTableService.tableName
+    }
+    get tasksTableUrl(): string {
         return this.tasksTableService.tableUrl
     }
-    public get logsTableUrl(): string {
+    get logsTableUrl(): string {
         return this.logsTableService.tableUrl
     }
+    get categoriesTableUrl(): string {
+        return this.categoriesTableService.tableUrl
+    }
 
-    constructor(private tasksTableService: TableService, private logsTableService: TableService) { }
+    constructor(private tasksTableService: TableService, private logsTableService: TableService,
+        private categoriesTableService: TableService) { }
 
     async tasksTablesExists(): Promise<boolean> {
         const tasksTableExists = await this.tasksTableService.tableExists()
@@ -32,6 +40,11 @@ export class TimeloggingService {
 
     async logsTablesExists(): Promise<boolean> {
         const logsTableExists = await this.logsTableService.tableExists()
+        return logsTableExists
+    }
+
+    async categoriesTablesExists(): Promise<boolean> {
+        const logsTableExists = await this.categoriesTableService.tableExists()
         return logsTableExists
     }
 
@@ -51,12 +64,24 @@ export class TimeloggingService {
         return this.tasksTableService.insertEntity(task)
     }
 
+    async updateTask(task: Readonly<Task>): Promise<void> {
+        return this.tasksTableService.updateEntity(task)
+    }
+
     async getTask(category: string, name: string): Promise<Task> {
         return this.tasksTableService.getEntity(Task, category, name)
     }
 
     async getTasks(category?: string, take?: number): Promise<Task[]> {
         return this.tasksTableService.getEntities(Task, category, take)
+    }
+
+    async insertCategory(category: Readonly<Category>): Promise<void> {
+        this.categoriesTableService.insertEntity(category)
+    }
+
+    async getCategories(take?: number): Promise<Category[]> {
+        return this.categoriesTableService.getEntities(Category, null, take)
     }
 
     getWeeklyProgress(tasks: Task[], logs: Log[]): TaskProgress[] {
