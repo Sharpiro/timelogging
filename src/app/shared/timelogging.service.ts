@@ -4,7 +4,7 @@ import { nameof } from './type-functions';
 import { Log } from './models/log';
 import { Task } from './models/task';
 import { TaskProgress } from './models/task-progress';
-import { MondayStartUTCDate, MondayStartDate } from './monday-start-utc-date';
+import { MondayStartDate } from './monday-start-date';
 
 @Injectable({
     providedIn: 'root'
@@ -60,44 +60,30 @@ export class TimeloggingService {
     }
 
     getWeeklyProgress(tasks: Task[], logs: Log[]): TaskProgress[] {
-        const [start, stop] = this.getCurrentWeekRange()
+        const now = new MondayStartDate()
+        const weekStart = now.weekStart.timeMs
+        const weekEnd = now.weekEnd.timeMs
 
         const grouping = this.groupBy(nameof<Log>("task"), logs)
-        const tasksProgression = grouping.map(gOfL => {
-            const task = tasks.filter(t => t.name === gOfL.key)[0]
+        const tasksProgression = grouping.map(groupingOfLog => {
+            const task = tasks.filter(t => t.name === groupingOfLog.key)[0]
             if (!task) throw new Error(`could not find task '${task.name}' for given log`)
             if (!task.weeklyGoalMinutes) throw new Error("unable to calculate weeklyGoalMinutes")
 
-            const completedMinutesReduction = gOfL.value.reduce((prev, curr) => {
-                return { duration: prev.duration + curr.duration }
-            }, { duration: 0 })
+            const progressReduction = groupingOfLog.value.reduce((prev, curr) => {
+                const createdTimeMs = curr.created.timeMs
+                const isThisWeek = createdTimeMs >= weekStart && createdTimeMs <= weekEnd
+                const weeklyCompleted = isThisWeek ? prev.weeklyCompletedMinutes + curr.duration : prev.weeklyCompletedMinutes
+                return {
+                    totalCompletedMinutes: prev.totalCompletedMinutes + curr.duration,
+                    weeklyCompletedMinutes: weeklyCompleted
+                }
+            }, { totalCompletedMinutes: 0, weeklyCompletedMinutes: 0 })
 
-            return new TaskProgress(gOfL.key, task.weeklyGoalMinutes, completedMinutesReduction.duration,
-                task.status)
+            return new TaskProgress(groupingOfLog.key, task.weeklyGoalMinutes, progressReduction.weeklyCompletedMinutes,
+                progressReduction.totalCompletedMinutes, task.status)
         })
         return tasksProgression
-    }
-
-    private getCurrentWeekRange(): [MondayStartDate, MondayStartDate] {
-        // const date = new Date(2018, 7, 12)
-        // // const date = new Date()
-        // console.log(date)
-        // console.log(date.getDay());
-        // const now = new MondayStartUTCDate(2018, 7, 14, 15, 6, 0, 0)
-        // const now = new MondayStartUTCDate(2018, 7, 14, 0, 0, 0, 0)
-        // const now = new MondayStartUTCDate(2018, 7, 14, 0, 0, 0, 1)
-        // const now = new MondayStartUTCDate(2018, 7, 13, 23, 59, 59, 999)
-        const now = new MondayStartDate()
-
-        console.log(now)
-        console.log(now.dayOfTheWeek);
-        console.log(now.isoString);
-        console.log(now.weekStart.isoString);
-        console.log(now.weekEnd);
-        console.log(now.weekEnd.isoString);
-
-
-        return [now.weekStart, now.weekEnd]
     }
 
     private groupBy<TValue>(key: string, items: TValue[]): Grouping<TValue>[] {

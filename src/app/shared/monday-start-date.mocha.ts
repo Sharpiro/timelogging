@@ -1,5 +1,5 @@
 import * as assert from 'assert'
-import { MondayStartDate } from './monday-start-utc-date';
+import { MondayStartDate } from './monday-start-date';
 
 describe('MondayStartUTCDate', () => {
     describe('getDay', () => {
@@ -19,6 +19,10 @@ describe('MondayStartUTCDate', () => {
             const date = new MondayStartDate(2018, 7, 19, 23, 59, 59, 999)
             assert.equal(date.dayOfTheWeek, 6)
         })
+        it('5', () => {
+            const date = new MondayStartDate(2018, 7, 19, 0, 0, 0, 0)
+            assert.equal(date.dayOfTheWeek, 6)
+        })
     })
     describe('weekStart', () => {
         it('1', () => {
@@ -35,6 +39,10 @@ describe('MondayStartUTCDate', () => {
         })
         it('4', () => {
             const date = new MondayStartDate(2018, 7, 19, 23, 59, 59, 999)
+            assert.equal(date.weekStart.isoString, "2018-08-13T04:00:00.000Z")
+        })
+        it('5', () => {
+            const date = new MondayStartDate(2018, 7, 19, 0, 0, 0, 0)
             assert.equal(date.weekStart.isoString, "2018-08-13T04:00:00.000Z")
         })
     })

@@ -6,6 +6,7 @@ package-lock.json
 /dist
 /tmp
 /out-tsc
+.nyc_output
 
 # dependencies
 /node_modules

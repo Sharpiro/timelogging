@@ -19,6 +19,11 @@
           <td mat-cell *matCellDef="let taskProgress"> {{taskProgress.weeklyCompletedMinutes}} </td>
         </ng-container>
 
+        <ng-container matColumnDef="totalCompletedMinutes">
+          <th mat-header-cell *matHeaderCellDef> totalCompletedMinutes </th>
+          <td mat-cell *matCellDef="let taskProgress"> {{taskProgress.totalCompletedMinutes}} </td>
+        </ng-container>
+
       <ng-container matColumnDef="goal">
         <th mat-header-cell *matHeaderCellDef> goal </th>
         <td mat-cell *matCellDef="let taskProgress"> {{taskProgress.weeklyGoalMinutes}} </td>
@@ -49,15 +54,9 @@
         <th mat-header-cell *matHeaderCellDef> duration </th>
         <td mat-cell *matCellDef="let log"> {{log.duration}} </td>
       </ng-container>
-
-      <ng-container matColumnDef="inverseMilliseconds">
-        <th mat-header-cell *matHeaderCellDef> inverseMilliseconds </th>
-        <td mat-cell *matCellDef="let log"> {{log.inverseMilliseconds}} </td>
-      </ng-container>
-
       <ng-container matColumnDef="createdDateISO">
         <th mat-header-cell *matHeaderCellDef> createdDateISO </th>
-        <td mat-cell *matCellDef="let log"> {{log.created.toISOString()}} </td>
+        <td mat-cell *matCellDef="let log"> {{log.created.isoString}} </td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="logsColumns"></tr>
@@ -92,14 +91,9 @@
         <td mat-cell *matCellDef="let task"> {{task.category}} </td>
       </ng-container>
 
-      <ng-container matColumnDef="inverseMilliseconds">
-        <th mat-header-cell *matHeaderCellDef> inverseMilliseconds </th>
-        <td mat-cell *matCellDef="let task"> {{task.inverseMilliseconds}} </td>
-      </ng-container>
-
       <ng-container matColumnDef="createdDateISO">
         <th mat-header-cell *matHeaderCellDef> createdDateISO </th>
-        <td mat-cell *matCellDef="let task"> {{task.created.toISOString()}} </td>
+        <td mat-cell *matCellDef="let task"> {{task.created.isoString}} </td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="tasksColumns"></tr>
