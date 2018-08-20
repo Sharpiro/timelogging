@@ -1,7 +1,7 @@
 <div class="flex-container">
   <form class="flex-item">
     <mat-form-field class="input">
-      <mat-select name="taskx" placeholder="Task" [(ngModel)]="task" (ngModelChange)="ngModelChange($event)">
+      <mat-select name="taskx" placeholder="Task" [(ngModel)]="task" (ngModelChange)="newTask($event)">
         <mat-option value="none">None</mat-option>
         <mat-option *ngFor="let taskx of tasks" [value]="taskx">
           {{taskx.name}}

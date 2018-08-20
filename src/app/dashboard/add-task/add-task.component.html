@@ -1,8 +1,8 @@
-<h1 mat-dialog-title>{{viewModel.mode}} Task</h1>
+<h1 mat-dialog-title>Add Task</h1>
 
 <div mat-dialog-content>
   <mat-form-field>
-    <input matInput placeholder="name" [formControl]="nameFormControl" [readonly]="viewModel.task">
+    <input matInput placeholder="name" [formControl]="nameFormControl">
     <mat-error *ngIf="nameFormControl.hasError('required')">
       Please enter a task name
     </mat-error>
@@ -24,7 +24,7 @@
 
 <div mat-dialog-content>
   <mat-form-field>
-    <input matInput placeholder="minutes per week" [formControl]="weeklyMinutesFormControl">
+    <input matInput type="number" placeholder="minutes per week" [formControl]="weeklyMinutesFormControl">
     <mat-error *ngIf="weeklyMinutesFormControl.hasError('required')">
       Please enter a weekly minutes goal
     </mat-error>

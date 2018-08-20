@@ -13,9 +13,9 @@ import { TableService } from './shared/table.service';
 import * as azure from '../assets/js/azure-storage.table';
 import { TimeloggingService } from './shared/timelogging.service';
 import { environment } from '../environments/environment';
-import { AddTaskDialogComponent } from './dashboard/add-task-dialog/add-task-dialog.component';
+import { AddTaskComponent } from './dashboard/add-task/add-task.component';
 import { ModifyTaskComponent } from './reporting/modify-task/modify-task.component';
-import { AddCategoryDialogComponent } from './dashboard/add-category-dialog/add-category-dialog.component';
+import { AddCategoryComponent } from './dashboard/add-category/add-category.component';
 
 const timeloggingServiceFactory: () => TimeloggingService = () => {
   console.log(environment.connectionString);
@@ -31,9 +31,9 @@ const timeloggingServiceFactory: () => TimeloggingService = () => {
     AppComponent,
     DashboardComponent,
     ReportingComponent,
-    AddTaskDialogComponent,
+    AddTaskComponent,
     ModifyTaskComponent,
-    AddCategoryDialogComponent
+    AddCategoryComponent
   ],
   imports: [
     BrowserModule,
@@ -59,7 +59,7 @@ const timeloggingServiceFactory: () => TimeloggingService = () => {
     { provide: TimeloggingService, useFactory: timeloggingServiceFactory },
     { provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher }
   ],
-  entryComponents: [AddTaskDialogComponent, AddCategoryDialogComponent],
+  entryComponents: [AddTaskComponent, ModifyTaskComponent, AddCategoryComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

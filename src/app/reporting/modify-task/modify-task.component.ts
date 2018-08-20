@@ -1,8 +1,9 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { CustomFormControl } from '../../shared/angular-helpers';
+import { Component, OnInit, Inject, Output, EventEmitter } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialog, MatSnackBar } from '@angular/material';
 import { Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { Task } from '../../shared/models/task';
+import { Task, TaskStatus } from '../../shared/models/task';
+import { CustomFormControl } from '../../shared/angular-helpers';
+import { TaskDialogModel } from '../../shared/models/task-dialog-model';
 
 @Component({
   selector: 'app-modify-task',
@@ -10,31 +11,47 @@ import { Task } from '../../shared/models/task';
   styleUrls: ['./modify-task.component.css']
 })
 export class ModifyTaskComponent implements OnInit {
-  nameFormControl = new CustomFormControl('', [
-    Validators.required
-  ]);
-  categoryFormControl = new CustomFormControl('', [
-    Validators.required
-  ]);
-  weeklyMinutesFormControl = new CustomFormControl('', [
-    Validators.required
-  ]);
+  private _statuses: any[]
+
+  nameFormControl: CustomFormControl
+  categoryFormControl: CustomFormControl
+  weeklyMinutesFormControl: CustomFormControl
+  statusFormControl: CustomFormControl
+
+  @Output() submitted = new EventEmitter<Task>();
+
+  get statuses() {
+    if (this._statuses) return this._statuses
+    const list = []
+    let keys = Object.keys(TaskStatus).filter(k => typeof TaskStatus[k as any] === "number")
+    for (const key of keys) {
+      list.push({ name: key, num: TaskStatus[key] })
+    }
+    this._statuses = list
+    return this._statuses
+  }
 
   constructor(
-    public dialogRef: MatDialogRef<ModifyTaskComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any) { }
+    @Inject(MAT_DIALOG_DATA) public viewModel: TaskDialogModel,
+    public snackBar: MatSnackBar) {
+    this.nameFormControl = new CustomFormControl({ value: viewModel.currentTask.name, disabled: true }, [Validators.required]);
+    this.categoryFormControl = new CustomFormControl({ value: viewModel.currentTask.category, disabled: true }, [Validators.required]);
+    this.weeklyMinutesFormControl = new CustomFormControl(viewModel.currentTask.weeklyGoalMinutes, [Validators.required]);
+    this.statusFormControl = new CustomFormControl(viewModel.currentTask.status, [Validators.required]);
+  }
 
   ngOnInit() { }
 
   submit() {
-    [this.nameFormControl, this.categoryFormControl, this.weeklyMinutesFormControl].forEach(f => { f.markAsDirty() })
-    if (this.nameFormControl.invalidOrEmpty || this.categoryFormControl.invalidOrEmpty || this.weeklyMinutesFormControl.invalidOrEmpty)
-      return
+    if (this.weeklyMinutesFormControl.invalidOrEmpty || this.statusFormControl.invalidOrEmpty) return
 
-    const weeklyMinutesGoal = +this.weeklyMinutesFormControl.value
-    if (isNaN(weeklyMinutesGoal)) throw new Error("Unable to parse weekly minutes")
-    
-    const task = new Task(this.categoryFormControl.value, this.nameFormControl.value, weeklyMinutesGoal)
-    this.dialogRef.close(task);
+    if (!this.weeklyMinutesFormControl.dirty && !this.statusFormControl.dirty) {
+      this.snackBar.open("task is unmodified", "OK", { duration: 5000 })
+      return
+    }
+    this.viewModel.currentTask.weeklyGoalMinutes = this.weeklyMinutesFormControl.value
+    this.viewModel.currentTask.status = this.statusFormControl.value
+
+    this.submitted.emit(this.viewModel.currentTask)
   }
 }

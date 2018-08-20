@@ -5,7 +5,8 @@ import { Log } from '../shared/models/log';
 import { Task } from '../shared/models/task';
 import { TaskProgress } from '../shared/models/task-progress';
 import { Category } from '../shared/category';
-import { AddTaskDialogComponent, TaskDialogModel } from '../dashboard/add-task-dialog/add-task-dialog.component';
+import { ModifyTaskComponent } from './modify-task/modify-task.component';
+import { TaskDialogModel } from '../shared/models/task-dialog-model';
 
 @Component({
   selector: 'app-reporting',
@@ -39,18 +40,16 @@ export class ReportingComponent implements OnInit {
   }
 
   editTask(task: Task) {
-    console.log(task)
     const data: TaskDialogModel = {
-      mode: "Edit",
       categories: this.categories.map(c => c.name),
       currentTask: task
     }
-    const dialogRef = this.dialog.open(AddTaskDialogComponent, {
+    const dialogRef = this.dialog.open(ModifyTaskComponent, {
       width: "400px",
       data: data
     })
-    dialogRef.afterClosed().subscribe(async (task: Task) => {
-      if (!task) return
+    dialogRef.componentInstance.submitted.subscribe(async (task: Task) => {
+      dialogRef.close()
 
       try {
         await this.timeloggingService.updateTask(task)

@@ -1,4 +1,5 @@
-<h1 mat-dialog-title>New Task</h1>
+<h1 mat-dialog-title>Modify Task</h1>
+
 <div mat-dialog-content>
   <mat-form-field>
     <input matInput placeholder="name" [formControl]="nameFormControl">
@@ -7,25 +8,40 @@
     </mat-error>
   </mat-form-field>
 </div>
+
 <div mat-dialog-content>
   <mat-form-field>
     <mat-select placeholder="category" [formControl]="categoryFormControl">
       <mat-option>None</mat-option>
-      <mat-option *ngFor="let category of data.categories" [value]="category">
+      <mat-option *ngFor="let category of viewModel.categories" [value]="category">
         {{category}}
       </mat-option>
+      <mat-option value="addNew">Add New...</mat-option>
     </mat-select>
     <mat-error *ngIf="categoryFormControl.hasError('required')">please select a category</mat-error>
   </mat-form-field>
 </div>
+
 <div mat-dialog-content>
   <mat-form-field>
-    <input matInput placeholder="minutes per week" [formControl]="weeklyMinutesFormControl">
+    <input matInput type="number" placeholder="minutes per week" [formControl]="weeklyMinutesFormControl">
     <mat-error *ngIf="weeklyMinutesFormControl.hasError('required')">
       Please enter a weekly minutes goal
     </mat-error>
   </mat-form-field>
 </div>
+
+<div mat-dialog-content>
+  <mat-form-field>
+    <mat-select placeholder="status" [formControl]="statusFormControl">
+      <mat-option *ngFor="let status of statuses" [value]="status.num">
+        {{status.name}}
+      </mat-option>
+    </mat-select>
+    <mat-error *ngIf="statusFormControl.hasError('required')">please select a category</mat-error>
+  </mat-form-field>
+</div>
+
 <div mat-dialog-actions>
-  <button mat-button (click)="submit()">Submit</button>
+  <button mat-raised-button (click)="submit()">Submit</button>
 </div>

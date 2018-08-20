@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { TableService } from './table.service';
 import { nameof } from './type-functions';
 import { Log } from './models/log';
-import { Task } from './models/task';
+import { Task, TaskStatus } from './models/task';
 import { TaskProgress } from './models/task-progress';
 import { MondayStartDate } from './monday-start-date';
 import { Category } from './category';
@@ -89,13 +89,21 @@ export class TimeloggingService {
         const weekStart = now.weekStart.timeMs
         const weekEnd = now.weekEnd.timeMs
 
-        const grouping = this.groupBy(nameof<Log>("task"), logs)
-        const tasksProgression = grouping.map(groupingOfLog => {
-            const task = tasks.filter(t => t.name === groupingOfLog.key)[0]
+        const groupings = this.groupBy(nameof<Log>("task"), logs)
+
+        const tasksProgression: TaskProgress[] = []
+        const tasksMap = tasks.reduce((map, task) => {
+            map[task.name] = task
+            return map
+        }, {})
+
+        for (var grouping of groupings) {
+            const task = tasksMap[grouping.key]
+            if (task.status !== TaskStatus.InProgress) continue
             if (!task) throw new Error(`could not find task '${task.name}' for given log`)
             if (!task.weeklyGoalMinutes) throw new Error("unable to calculate weeklyGoalMinutes")
 
-            const progressReduction = groupingOfLog.value.reduce((prev, curr) => {
+            const progressReduction = grouping.value.reduce((prev, curr) => {
                 const createdTimeMs = curr.created.timeMs
                 const isThisWeek = createdTimeMs >= weekStart && createdTimeMs <= weekEnd
                 const weeklyCompleted = isThisWeek ? prev.weeklyCompletedMinutes + curr.duration : prev.weeklyCompletedMinutes
@@ -105,9 +113,10 @@ export class TimeloggingService {
                 }
             }, { totalCompletedMinutes: 0, weeklyCompletedMinutes: 0 })
 
-            return new TaskProgress(groupingOfLog.key, task.weeklyGoalMinutes, progressReduction.weeklyCompletedMinutes,
-                progressReduction.totalCompletedMinutes, task.status)
-        })
+            tasksProgression.push(new TaskProgress(grouping.key, task.weeklyGoalMinutes, progressReduction.weeklyCompletedMinutes,
+                progressReduction.totalCompletedMinutes, task.status))
+        }
+
         return tasksProgression
     }
 

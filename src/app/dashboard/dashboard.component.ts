@@ -1,10 +1,11 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatSnackBar, MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { TimeloggingService } from '../shared/timelogging.service';
-import { AddTaskDialogComponent, TaskDialogModel } from './add-task-dialog/add-task-dialog.component';
 import { Task, TaskStatus } from '../shared/models/task';
 import { Log } from '../shared/models/log';
 import { Category } from '../shared/category';
+import { TaskDialogModel } from '../shared/models/task-dialog-model';
+import { AddTaskComponent } from './add-task/add-task.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -29,11 +30,6 @@ export class DashboardComponent implements OnInit {
     this.categories = await categoriesPromise
   }
 
-  ngModelChange(event) {
-    if (event != "addNew") return
-    this.newTask()
-  }
-
   submit() {
     if (!this.task || !this.durationFormatted) {
       this.snackBar.open("please fill out all fields", "OK", { duration: 5000 })
@@ -50,22 +46,19 @@ export class DashboardComponent implements OnInit {
     this.durationFormatted = null
   }
 
-  debug() { }
+  async newTask(selection: string) {
+    if (selection != "addNew") return
 
-  async newTask() {
     const data: TaskDialogModel = {
-      mode: "New",
       categories: this.categories.map(c => c.name)
     }
-    const dialogRef = this.dialog.open(AddTaskDialogComponent, {
+    const dialogRef = this.dialog.open(AddTaskComponent, {
       width: "400px",
       data: data
     })
-    dialogRef.afterClosed().subscribe(async (task: Task) => {
-      if (!task) {
-        this.task = null
-        return
-      }
+    dialogRef.componentInstance.submitted.subscribe(async (task: Task) => {
+      dialogRef.close()
+
       try {
         await this.timeloggingService.insertTask(task)
         this.snackBar.open(`task '${task.name}' added`, "OK", { duration: 5000 })
@@ -76,7 +69,10 @@ export class DashboardComponent implements OnInit {
         this.snackBar.open(`error: ${ex.message}`, "OK", { duration: 5000 })
         this.task = null
       }
-    });
+    })
+    dialogRef.backdropClick().subscribe(() => {
+      this.task = null
+    })
   }
 
   getMinutes(timeFormatted: string) {
