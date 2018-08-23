@@ -1,11 +1,10 @@
 import { Component, OnInit, Inject, Output, EventEmitter } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatSnackBar } from '@angular/material';
 import { Validators } from '@angular/forms';
-import { Task, TaskStatus } from '../../shared/models/task';
+import { Task, getStatuses } from '../../shared/models/task';
 import { CustomFormControl } from '../../shared/angular-helpers';
 import { TimeloggingService } from '../../shared/timelogging.service';
 import { Category } from '../../shared/category';
-import { TaskDialogModel } from '../../shared/models/task-dialog-model';
 import { AddCategoryComponent } from '../add-category/add-category.component';
 
 @Component({
@@ -25,18 +24,13 @@ export class AddTaskComponent implements OnInit {
 
   get statuses() {
     if (this._statuses) return this._statuses
-    const list = []
-    let keys = Object.keys(TaskStatus).filter(k => typeof TaskStatus[k as any] === "number").slice(0, 2)
-    for (const key of keys) {
-      list.push({ name: key, num: TaskStatus[key] })
-    }
-    this._statuses = list
+    this._statuses = getStatuses().slice(0, 2)
     return this._statuses
   }
 
   constructor(
     private dialog: MatDialog,
-    @Inject(MAT_DIALOG_DATA) public viewModel: TaskDialogModel,
+    @Inject(MAT_DIALOG_DATA) public categories: string[],
     public snackBar: MatSnackBar,
     private timeloggingService: TimeloggingService) {
 
@@ -57,7 +51,7 @@ export class AddTaskComponent implements OnInit {
       try {
         await this.timeloggingService.insertCategory(category)
         this.snackBar.open(`category '${category.name}' added`, "OK", { duration: 5000 })
-        this.viewModel.categories.push(category.name)
+        this.categories.push(category.name)
         this.categoryFormControl.setValue(category.name)
       }
       catch (ex) {

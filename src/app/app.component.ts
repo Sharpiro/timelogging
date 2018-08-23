@@ -27,7 +27,7 @@ export class AppComponent implements OnInit {
       if (!(await logsTableExistsPromise)) throw new Error(`table '${this.timeloggingService.logsTableName}' does not exist @ '${this.timeloggingService.logsTableUrl}`)
       if (!(await categoriesTableExistsPromise)) throw new Error(`table '${this.timeloggingService.categoriesTableName}' does not exist @ '${this.timeloggingService.categoriesTableUrl}`)
     } catch (ex) {
-      this.snackBar.open(ex.message, undefined, { duration: 5000 })
+      this.snackBar.open("error: could not connect to table storage.  Check logs for details", "OK", { duration: 5000 })
       console.error(ex)
     }
   }

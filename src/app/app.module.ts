@@ -2,7 +2,9 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppComponent } from './app.component';
-import { MatButtonModule, MatCheckboxModule, MatFormFieldModule, MatOptionModule, MatSelectModule, MatSidenavModule, MatIconModule, MatToolbarModule, MatDialogModule, ErrorStateMatcher, ShowOnDirtyErrorStateMatcher, MatTabsModule, MatDividerModule, MatListModule, MatTableModule } from '@angular/material';
+import { MatButtonModule, MatCheckboxModule, MatFormFieldModule, MatOptionModule, MatSelectModule, 
+  MatSidenavModule, MatIconModule, MatToolbarModule, MatDialogModule, ErrorStateMatcher, 
+  ShowOnDirtyErrorStateMatcher, MatTabsModule, MatTableModule, MatCardModule, MatProgressBarModule } from '@angular/material';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
@@ -16,6 +18,7 @@ import { environment } from '../environments/environment';
 import { AddTaskComponent } from './dashboard/add-task/add-task.component';
 import { ModifyTaskComponent } from './reporting/modify-task/modify-task.component';
 import { AddCategoryComponent } from './dashboard/add-category/add-category.component';
+import { TasksComponent } from './tasks/tasks.component';
 
 const timeloggingServiceFactory: () => TimeloggingService = () => {
   console.log(environment.connectionString);
@@ -33,7 +36,8 @@ const timeloggingServiceFactory: () => TimeloggingService = () => {
     ReportingComponent,
     AddTaskComponent,
     ModifyTaskComponent,
-    AddCategoryComponent
+    AddCategoryComponent,
+    TasksComponent
   ],
   imports: [
     BrowserModule,
@@ -53,7 +57,9 @@ const timeloggingServiceFactory: () => TimeloggingService = () => {
     MatDialogModule,
     ReactiveFormsModule,
     MatTabsModule,
-    MatTableModule
+    MatTableModule,
+    MatCardModule,
+    MatProgressBarModule
   ],
   providers: [
     { provide: TimeloggingService, useFactory: timeloggingServiceFactory },

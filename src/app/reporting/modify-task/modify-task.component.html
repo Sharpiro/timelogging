@@ -13,7 +13,7 @@
   <mat-form-field>
     <mat-select placeholder="category" [formControl]="categoryFormControl">
       <mat-option>None</mat-option>
-      <mat-option *ngFor="let category of viewModel.categories" [value]="category">
+      <mat-option *ngFor="let category of categories" [value]="category">
         {{category}}
       </mat-option>
       <mat-option value="addNew">Add New...</mat-option>

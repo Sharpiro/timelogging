@@ -1,9 +1,8 @@
 import { Component, OnInit, Inject, Output, EventEmitter } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialog, MatSnackBar } from '@angular/material';
+import { MAT_DIALOG_DATA, MatSnackBar } from '@angular/material';
 import { Validators } from '@angular/forms';
-import { Task, TaskStatus } from '../../shared/models/task';
+import { Task, getStatuses } from '../../shared/models/task';
 import { CustomFormControl } from '../../shared/angular-helpers';
-import { TaskDialogModel } from '../../shared/models/task-dialog-model';
 
 @Component({
   selector: 'app-modify-task',
@@ -12,6 +11,7 @@ import { TaskDialogModel } from '../../shared/models/task-dialog-model';
 })
 export class ModifyTaskComponent implements OnInit {
   private _statuses: any[]
+  categories: string[]
 
   nameFormControl: CustomFormControl
   categoryFormControl: CustomFormControl
@@ -22,22 +22,18 @@ export class ModifyTaskComponent implements OnInit {
 
   get statuses() {
     if (this._statuses) return this._statuses
-    const list = []
-    let keys = Object.keys(TaskStatus).filter(k => typeof TaskStatus[k as any] === "number")
-    for (const key of keys) {
-      list.push({ name: key, num: TaskStatus[key] })
-    }
-    this._statuses = list
+    this._statuses = getStatuses()
     return this._statuses
   }
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public viewModel: TaskDialogModel,
+    @Inject(MAT_DIALOG_DATA) public currentTask: Task,
     public snackBar: MatSnackBar) {
-    this.nameFormControl = new CustomFormControl({ value: viewModel.currentTask.name, disabled: true }, [Validators.required]);
-    this.categoryFormControl = new CustomFormControl({ value: viewModel.currentTask.category, disabled: true }, [Validators.required]);
-    this.weeklyMinutesFormControl = new CustomFormControl(viewModel.currentTask.weeklyGoalMinutes, [Validators.required]);
-    this.statusFormControl = new CustomFormControl(viewModel.currentTask.status, [Validators.required]);
+    this.nameFormControl = new CustomFormControl({ value: currentTask.name, disabled: true }, [Validators.required]);
+    this.categoryFormControl = new CustomFormControl({ value: currentTask.category, disabled: true }, [Validators.required]);
+    this.weeklyMinutesFormControl = new CustomFormControl(currentTask.weeklyGoalMinutes, [Validators.required]);
+    this.statusFormControl = new CustomFormControl(currentTask.status, [Validators.required]);
+    this.categories = [this.currentTask.category]
   }
 
   ngOnInit() { }
@@ -49,9 +45,9 @@ export class ModifyTaskComponent implements OnInit {
       this.snackBar.open("task is unmodified", "OK", { duration: 5000 })
       return
     }
-    this.viewModel.currentTask.weeklyGoalMinutes = this.weeklyMinutesFormControl.value
-    this.viewModel.currentTask.status = this.statusFormControl.value
+    this.currentTask.weeklyGoalMinutes = this.weeklyMinutesFormControl.value
+    this.currentTask.status = this.statusFormControl.value
 
-    this.submitted.emit(this.viewModel.currentTask)
+    this.submitted.emit(this.currentTask)
   }
 }

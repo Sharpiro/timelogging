@@ -4,7 +4,6 @@ import { TimeloggingService } from '../shared/timelogging.service';
 import { Task, TaskStatus } from '../shared/models/task';
 import { Log } from '../shared/models/log';
 import { Category } from '../shared/category';
-import { TaskDialogModel } from '../shared/models/task-dialog-model';
 import { AddTaskComponent } from './add-task/add-task.component';
 
 @Component({
@@ -15,7 +14,7 @@ import { AddTaskComponent } from './add-task/add-task.component';
 export class DashboardComponent implements OnInit {
   title = 'timelogging'
   task: Task
-  durationFormatted: string
+  durationFormatted: number
   tasks: Task[]
   logs: Log[]
   categories: Category[]
@@ -30,31 +29,35 @@ export class DashboardComponent implements OnInit {
     this.categories = await categoriesPromise
   }
 
-  submit() {
+  async submit() {
     if (!this.task || !this.durationFormatted) {
       this.snackBar.open("please fill out all fields", "OK", { duration: 5000 })
       return
     }
-    let minutes = this.getMinutes(this.durationFormatted)
+    let minutes = this.durationFormatted
     if (minutes < 0) {
       this.snackBar.open("error converting time string to minutes", "OK", { duration: 5000 })
       return
     }
 
-    const newLog = new Log(this.task.name, minutes)
-    this.timeloggingService.insertLog(newLog)
-    this.durationFormatted = null
+    try {
+      const newLog = new Log(this.task.name, minutes)
+      await this.timeloggingService.insertLog(newLog)
+      this.durationFormatted = null
+      this.snackBar.open("Successfully added log", "OK", { duration: 5000 })
+    }
+    catch (ex) {
+      this.snackBar.open("error while adding new log", "OK", { duration: 5000 })
+      console.error(ex)
+    }
   }
 
   async newTask(selection: string) {
     if (selection != "addNew") return
 
-    const data: TaskDialogModel = {
-      categories: this.categories.map(c => c.name)
-    }
     const dialogRef = this.dialog.open(AddTaskComponent, {
       width: "400px",
-      data: data
+      data: this.categories.map(c => c.name)
     })
     dialogRef.componentInstance.submitted.subscribe(async (task: Task) => {
       dialogRef.close()
@@ -75,12 +78,12 @@ export class DashboardComponent implements OnInit {
     })
   }
 
-  getMinutes(timeFormatted: string) {
-    let split = timeFormatted.split(":")
-    let temp = split.length >= 2 ? +split[0] * 60 + +split[1] : +split[0]
-    if (isNaN(temp)) {
-      return -1
-    }
-    return temp
-  }
+  // getMinutes(timeFormatted: string) {
+  //   let split = timeFormatted.split(":")
+  //   let temp = split.length >= 2 ? +split[0] * 60 + +split[1] : +split[0]
+  //   if (isNaN(temp)) {
+  //     return -1
+  //   }
+  //   return temp
+  // }
 }

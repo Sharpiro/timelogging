@@ -1,0 +1,21 @@
+.flex-container{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; 
+}
+
+.mat-card-container{
+    flex-basis: 200px;
+    padding: 10px;
+}
+
+@media screen and (max-width: 600px) {
+    .mat-card-container{
+        flex-basis: 95%;
+        padding: 10px;
+    }
+}
+
+mat-form-field{
+    width:100%;
+}

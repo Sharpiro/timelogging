@@ -8,6 +8,10 @@ export class Task extends DateEntity {
     weeklyGoalMinutes: number
     status = TaskStatus.NotStarted
 
+    get percentProgress(): number {
+        return 0
+    }
+
     constructor();
     constructor(category: string, name: string, weeklyGoalMinutes: number, status?: TaskStatus, createdDate?: Date);
     constructor(category?: string, name?: string, weeklyGoalMinutes?: number, status?: TaskStatus, createdDate = new Date()) {
@@ -26,4 +30,13 @@ export enum TaskStatus {
     Done,
     Paused,
     Canceled
+}
+
+export function getStatuses() {
+    const statuses = []
+    let keys = Object.keys(TaskStatus).filter(k => typeof TaskStatus[k as any] === "number")
+    for (const key of keys) {
+        statuses.push({ name: key, num: TaskStatus[key] })
+    }
+    return statuses
 }

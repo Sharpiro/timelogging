@@ -6,7 +6,6 @@ import { Task } from '../shared/models/task';
 import { TaskProgress } from '../shared/models/task-progress';
 import { Category } from '../shared/category';
 import { ModifyTaskComponent } from './modify-task/modify-task.component';
-import { TaskDialogModel } from '../shared/models/task-dialog-model';
 
 @Component({
   selector: 'app-reporting',
@@ -40,13 +39,9 @@ export class ReportingComponent implements OnInit {
   }
 
   editTask(task: Task) {
-    const data: TaskDialogModel = {
-      categories: this.categories.map(c => c.name),
-      currentTask: task
-    }
     const dialogRef = this.dialog.open(ModifyTaskComponent, {
       width: "400px",
-      data: data
+      data: task
     })
     dialogRef.componentInstance.submitted.subscribe(async (task: Task) => {
       dialogRef.close()
