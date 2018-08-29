@@ -16,9 +16,6 @@ export class TasksComponent implements OnInit {
   constructor(private snackBar: MatSnackBar, private dialog: MatDialog, private timeloggingService: TimeloggingService) { }
 
   async ngOnInit() {
-
-    console.log(TaskStatus[0])
-
     try {
       this.tasks = (await this.timeloggingService.getTasks()).sort((one, two) => { return +one.inverseMilliseconds - +two.inverseMilliseconds })
     }
@@ -27,30 +24,6 @@ export class TasksComponent implements OnInit {
       console.error(error)
     }
   }
-
-  // onSwipeLeft(event) {
-  //   console.log("swiped left...")
-  //   console.log(event)
-  //   alert("swiped left...")
-  // }
-
-  // onSwipeRight(event) {
-  //   console.log("swiped right...")
-  //   console.log(event)
-  //   alert("swiped right...")
-  // }
-
-  // onDoubleTap(event) {
-  //   console.log("double tap...")
-  //   console.log(event)
-  //   alert("double tap...")
-  // }
-
-  // onPress(event) {
-  //   console.log("press...")
-  //   console.log(event)
-  //   alert("press...")
-  // }
 
   editTask(task: Task) {
     if (!task) throw new Error("unable to receive task from view")

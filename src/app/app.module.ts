@@ -19,6 +19,7 @@ import { AddTaskComponent } from './dashboard/add-task/add-task.component';
 import { ModifyTaskComponent } from './reporting/modify-task/modify-task.component';
 import { AddCategoryComponent } from './dashboard/add-category/add-category.component';
 import { TasksComponent } from './tasks/tasks.component';
+import { ProgressComponent } from './progress/progress.component';
 
 const timeloggingServiceFactory: () => TimeloggingService = () => {
   console.log(environment.connectionString);
@@ -37,7 +38,8 @@ const timeloggingServiceFactory: () => TimeloggingService = () => {
     AddTaskComponent,
     ModifyTaskComponent,
     AddCategoryComponent,
-    TasksComponent
+    TasksComponent,
+    ProgressComponent
   ],
   imports: [
     BrowserModule,

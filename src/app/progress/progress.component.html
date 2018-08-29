@@ -1,0 +1,35 @@
+<div class="flex-container">
+  <div *ngFor="let taskProgress of taskProgressList" class="mat-card-container">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>{{taskProgress.taskName}}</mat-card-title>
+        <mat-card-subtitle>{{taskProgress.category}}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div>
+          <mat-form-field class="example-full-width">
+            <input matInput placeholder="weeklyGoalMinutes" value="{{taskProgress.weeklyGoalMinutes}}" readonly>
+          </mat-form-field>
+        </div>
+        <div>
+          <mat-form-field class="example-full-width">
+            <input matInput placeholder="weeklyCompletedMinutes" value="{{taskProgress.weeklyCompletedMinutes}}" readonly>
+          </mat-form-field>
+        </div>
+        <div>
+          <mat-form-field class="example-full-width">
+            <input matInput placeholder="totalCompletedMinutes" value="{{taskProgress.totalCompletedMinutes}}" readonly>
+          </mat-form-field>
+        </div>
+        <div>
+          <mat-form-field class="example-full-width">
+            <input matInput placeholder="status" value="{{taskStatus[taskProgress.status]}}" readonly>
+          </mat-form-field>
+        </div>
+        <div>
+          <mat-progress-bar mode="determinate" value="{{taskProgress.weeklyCompletionPercent}}"></mat-progress-bar>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

@@ -113,8 +113,15 @@ export class TimeloggingService {
                 }
             }, { totalCompletedMinutes: 0, weeklyCompletedMinutes: 0 })
 
-            tasksProgression.push(new TaskProgress(grouping.key, task.weeklyGoalMinutes, progressReduction.weeklyCompletedMinutes,
-                progressReduction.totalCompletedMinutes, task.status))
+            const taskProgress = new TaskProgress({
+                taskName: grouping.key,
+                category: task.category,
+                weeklyGoalMinutes: task.weeklyGoalMinutes,
+                weeklyCompletedMinutes: progressReduction.weeklyCompletedMinutes,
+                totalCompletedMinutes: progressReduction.totalCompletedMinutes,
+                status: task.status
+            })
+            tasksProgression.push(taskProgress)
         }
 
         return tasksProgression

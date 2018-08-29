@@ -2,6 +2,7 @@ import { TaskStatus } from "./task";
 
 export class TaskProgress {
     taskName: string
+    category: string
     weeklyGoalMinutes: number
     weeklyCompletedMinutes: number
     totalCompletedMinutes: number
@@ -13,12 +14,13 @@ export class TaskProgress {
         return remaining >= 0 ? remaining : 0
     }
 
-    constructor(taskName: string, weeklyGoalMinutes: number, weeklyCompletedMinutes: number, totalCompletedMinutes: number,
-        status?: TaskStatus) {
-        this.taskName = taskName
-        this.weeklyGoalMinutes = weeklyGoalMinutes
-        this.weeklyCompletedMinutes = weeklyCompletedMinutes
-        this.totalCompletedMinutes = totalCompletedMinutes
-        this.status = status
+    get weeklyCompletionPercent(): number {
+        if (this.status === TaskStatus.Done || this.status === TaskStatus.Paused) return 0
+        const percentComplete = this.weeklyCompletedMinutes / this.weeklyGoalMinutes * 100
+        return percentComplete
+    }
+
+    constructor(data: Partial<TaskProgress>) {
+        Object.assign(this, data)
     }
 }
