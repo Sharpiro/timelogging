@@ -11,8 +11,8 @@ export class StorageService {
   constructor() { }
 
   getLogs() {
-    let logsJson = localStorage.getItem(this.logsKey)
-    let logs: Log[] = logsJson ? JSON.parse(logsJson) : []
+    const logsJson = localStorage.getItem(this.logsKey)
+    const logs: Log[] = logsJson ? JSON.parse(logsJson) : []
     return logs
   }
 
@@ -24,8 +24,8 @@ export class StorageService {
   }
 
   getTasks() {
-    let tasksJson = localStorage.getItem(this.tasksKey)
-    let tasks: string[] = tasksJson ? JSON.parse(tasksJson) : []
+    const tasksJson = localStorage.getItem(this.tasksKey)
+    const tasks: string[] = tasksJson ? JSON.parse(tasksJson) : []
     return tasks
   }
 

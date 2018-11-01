@@ -4,7 +4,7 @@ import { Validators } from '@angular/forms';
 import { Task, getStatuses } from '../../shared/models/task';
 import { CustomFormControl } from '../../shared/angular-helpers';
 import { TimeloggingService } from '../../shared/timelogging.service';
-import { Category } from '../../shared/category';
+import { Category } from '../../shared/models/category';
 import { AddCategoryComponent } from '../add-category/add-category.component';
 
 @Component({
@@ -41,7 +41,7 @@ export class AddTaskComponent implements OnInit {
   }
 
   categoryChange = (categoryName) => {
-    if (categoryName != "addNew") return
+    if (categoryName !== "addNew") return
 
     const dialogRef = this.dialog.open(AddCategoryComponent, {
       width: "400px"
@@ -53,8 +53,7 @@ export class AddTaskComponent implements OnInit {
         this.snackBar.open(`category '${category.name}' added`, "OK", { duration: 5000 })
         this.categories.push(category.name)
         this.categoryFormControl.setValue(category.name)
-      }
-      catch (ex) {
+      } catch (ex) {
         this.snackBar.open(`error: ${ex.message}`, "OK", { duration: 5000 })
         this.categoryFormControl.reset()
       }

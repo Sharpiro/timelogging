@@ -20,8 +20,7 @@ export class ProgressComponent implements OnInit {
       const logs = await this.timeloggingService.getLogs()
       const tasks = await this.timeloggingService.getTasks()
       this.taskProgressList = await this.timeloggingService.getWeeklyProgress(tasks, logs)
-    }
-    catch (error) {
+    } catch (error) {
       this.snackBar.open(error.message, undefined, { duration: 5000 })
       console.error(error)
     }

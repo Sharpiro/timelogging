@@ -1,9 +1,8 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatSnackBar, MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { TimeloggingService } from '../shared/timelogging.service';
 import { Task, TaskStatus } from '../shared/models/task';
 import { Log } from '../shared/models/log';
-import { Category } from '../shared/category';
 import { AddTaskComponent } from './add-task/add-task.component';
 
 @Component({
@@ -17,7 +16,7 @@ export class DashboardComponent implements OnInit {
   durationFormatted: number
   tasks: Task[]
   logs: Log[]
-  categories: Category[]
+  categories: string[]
 
   constructor(public snackBar: MatSnackBar, private dialog: MatDialog, private timeloggingService: TimeloggingService) { }
 
@@ -26,7 +25,7 @@ export class DashboardComponent implements OnInit {
     const categoriesPromise = this.timeloggingService.getCategories()
 
     this.tasks = (await tasksPromise).filter(t => t.status === TaskStatus.InProgress)
-    this.categories = await categoriesPromise
+    this.categories = (await categoriesPromise).map(c => c.name)
   }
 
   async submit() {
@@ -34,7 +33,7 @@ export class DashboardComponent implements OnInit {
       this.snackBar.open("please fill out all fields", "OK", { duration: 5000 })
       return
     }
-    let minutes = this.durationFormatted
+    const minutes = this.durationFormatted
     if (minutes < 0) {
       this.snackBar.open("error converting time string to minutes", "OK", { duration: 5000 })
       return
@@ -45,19 +44,18 @@ export class DashboardComponent implements OnInit {
       await this.timeloggingService.insertLog(newLog)
       this.durationFormatted = null
       this.snackBar.open("Successfully added log", "OK", { duration: 5000 })
-    }
-    catch (ex) {
+    } catch (ex) {
       this.snackBar.open("error while adding new log", "OK", { duration: 5000 })
       console.error(ex)
     }
   }
 
   async newTask(selection: string) {
-    if (selection != "addNew") return
+    if (selection !== "addNew") return
 
     const dialogRef = this.dialog.open(AddTaskComponent, {
       width: "400px",
-      data: this.categories.map(c => c.name)
+      data: this.categories
     })
     dialogRef.componentInstance.submitted.subscribe(async (task: Task) => {
       dialogRef.close()
@@ -67,8 +65,7 @@ export class DashboardComponent implements OnInit {
         this.snackBar.open(`task '${task.name}' added`, "OK", { duration: 5000 })
         this.tasks.push(task)
         this.task = task
-      }
-      catch (ex) {
+      } catch (ex) {
         this.snackBar.open(`error: ${ex.message}`, "OK", { duration: 5000 })
         this.task = null
       }

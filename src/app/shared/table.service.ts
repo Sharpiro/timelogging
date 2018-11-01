@@ -23,8 +23,7 @@ export class TableService {
       this.tableService.doesTableExist(this.tableName, (error, result) => {
         if (!error) {
           resolve(result.exists)
-        }
-        else {
+        } else {
           reject(error)
         }
       })
@@ -36,22 +35,20 @@ export class TableService {
       this.tableService.createTableIfNotExists(this.tableName, function (error, result) {
         if (!error) {
           resolve(result)
-        }
-        else {
+        } else {
           reject(error)
         }
       })
     })
   }
 
-  async insertEntity<T>(entity: Readonly<T>): Promise<void> {
+  async insertEntity<T>(entity: Readonly<T>): Promise<{}> {
     const tableEntity = this.toTableEntity(entity)
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<any>((resolve, reject) => {
       this.tableService.insertEntity(this.tableName, tableEntity, function (error) {
         if (!error) {
           resolve()
-        }
-        else {
+        } else {
           reject(error)
         }
       })
@@ -64,8 +61,7 @@ export class TableService {
       this.tableService.mergeEntity(this.tableName, tableEntity, function (error) {
         if (!error) {
           resolve()
-        }
-        else {
+        } else {
           reject(error)
         }
       })
@@ -80,8 +76,7 @@ export class TableService {
           const tableEntity = classInstance.fromTableObject(result)
           const entity = classInstance.fromTableEntity(tableEntity, type)
           resolve(entity)
-        }
-        else {
+        } else {
           reject(error)
         }
       })
@@ -106,6 +101,7 @@ export class TableService {
             .map(te => classInstance.fromTableEntity(te, type))
           resolve(entities)
         }
+        // tslint:disable-next-line:one-line
         else {
           reject(error)
         }
@@ -119,18 +115,17 @@ export class TableService {
     if (!partitionKey || !rowKey) throw new Error("Error, provided type does not contain 'partition' or 'row' 'tableKey' decorators")
     if (!obj[partitionKey] || !obj[rowKey]) throw new Error(`Error, property '${partitionKey}' or '${rowKey}' was not defined`)
 
-    let tableEntity: any = {}
-    for (let id in obj) {
+    const tableEntity: any = {}
+    // tslint:disable-next-line:forin
+    for (const id in obj) {
       const propertyDescriptor = Object.getOwnPropertyDescriptor(obj, id)
       if (!propertyDescriptor) continue
 
-      if (id == partitionKey) {
+      if (id === partitionKey) {
         tableEntity[nameof<TableEntity>("PartitionKey")] = obj[id];
-      }
-      else if (id == rowKey) {
+      } else if (id === rowKey) {
         tableEntity[nameof<TableEntity>("RowKey")] = obj[id];
-      }
-      else {
+      } else {
         tableEntity[id] = obj[id];
       }
     }
@@ -150,14 +145,12 @@ export class TableService {
     const rowKey = Reflect.getMetadata("row", instance)
     if (!partitionKey || !rowKey) throw new Error("Error, provided type does not contain 'partition' or 'row' 'tableKey' decorators")
 
-    for (let id in tableEntity) {
-      if (id == nameof<TableEntity>("PartitionKey")) {
+    for (const id in tableEntity) {
+      if (id === nameof<TableEntity>("PartitionKey")) {
         instance[partitionKey] = tableEntity[id];
-      }
-      else if (id == nameof<TableEntity>("RowKey")) {
+      } else if (id === nameof<TableEntity>("RowKey")) {
         instance[rowKey] = tableEntity[id];
-      }
-      else {
+      } else {
         instance[id] = tableEntity[id];
       }
     }
@@ -170,7 +163,8 @@ export class TableService {
 
   private fromTableObject(obj: any): TableEntity {
     const newObj = {}
-    for (let id in obj) {
+    // tslint:disable-next-line:forin
+    for (const id in obj) {
       newObj[id] = obj[id]._;
     }
     return <any>newObj

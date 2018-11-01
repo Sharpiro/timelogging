@@ -34,7 +34,7 @@ export enum TaskStatus {
 
 export function getStatuses() {
     const statuses = []
-    let keys = Object.keys(TaskStatus).filter(k => typeof TaskStatus[k as any] === "number")
+    const keys = Object.keys(TaskStatus).filter(k => typeof TaskStatus[k as any] === "number")
     for (const key of keys) {
         statuses.push({ name: key, num: TaskStatus[key] })
     }

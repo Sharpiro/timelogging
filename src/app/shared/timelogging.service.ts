@@ -5,7 +5,7 @@ import { Log } from './models/log';
 import { Task, TaskStatus } from './models/task';
 import { TaskProgress } from './models/task-progress';
 import { MondayStartDate } from './monday-start-date';
-import { Category } from './category';
+import { Category } from './models/category';
 
 @Injectable({
     providedIn: 'root'
@@ -48,7 +48,7 @@ export class TimeloggingService {
         return logsTableExists
     }
 
-    async insertLog(log: Readonly<Log>): Promise<void> {
+    async insertLog(log: Readonly<Log>): Promise<{}> {
         return this.logsTableService.insertEntity(log)
     }
 
@@ -60,7 +60,7 @@ export class TimeloggingService {
         return this.logsTableService.getEntities(Log, task, take)
     }
 
-    async insertTask(task: Readonly<Task>): Promise<void> {
+    async insertTask(task: Readonly<Task>): Promise<{}> {
         return this.tasksTableService.insertEntity(task)
     }
 
@@ -76,8 +76,8 @@ export class TimeloggingService {
         return this.tasksTableService.getEntities(Task, category, take)
     }
 
-    async insertCategory(category: Readonly<Category>): Promise<void> {
-        this.categoriesTableService.insertEntity(category)
+    async insertCategory(category: Readonly<Category>): Promise<{}> {
+        return this.categoriesTableService.insertEntity(category)
     }
 
     async getCategories(take?: number): Promise<Category[]> {
@@ -89,15 +89,35 @@ export class TimeloggingService {
         const weekStart = now.weekStart.timeMs
         const weekEnd = now.weekEnd.timeMs
 
-        const groupings = this.groupBy(nameof<Log>("task"), logs)
+        const logGroups = this.groupBy(nameof<Log>("task"), logs)
 
         const tasksProgression: TaskProgress[] = []
         const tasksMap = tasks.reduce((map, task) => {
             map[task.name] = task
             return map
         }, {})
+        const logGroupsMap = logGroups.reduce((map, logGroup) => {
+            map[logGroup.key] = logGroup
+            return map
+        }, {})
 
-        for (var grouping of groupings) {
+        // tslint:disable-next-line:forin
+        for (const temp in tasksMap) {
+            const task: Task = tasksMap[temp]
+            if (!logGroupsMap[task.name] && task.status === TaskStatus.InProgress) {
+                const taskProgress = new TaskProgress({
+                    taskName: task.name,
+                    category: task.category,
+                    weeklyGoalMinutes: task.weeklyGoalMinutes,
+                    weeklyCompletedMinutes: 0,
+                    totalCompletedMinutes: 0,
+                    status: task.status
+                })
+                tasksProgression.push(taskProgress)
+            }
+        }
+
+        for (const grouping of logGroups) {
             const task = tasksMap[grouping.key]
             if (task.status !== TaskStatus.InProgress) continue
             if (!task) throw new Error(`could not find task '${task.name}' for given log`)
@@ -137,9 +157,10 @@ export class TimeloggingService {
             return groupingProgress
         }, {})
 
-        var final: Grouping<TValue>[] = []
-        for (const key in initial) {
-            final.push({ key: key, value: initial[key] })
+        const final: Grouping<TValue>[] = []
+        // tslint:disable-next-line:forin
+        for (const innerKey in initial) {
+            final.push({ key: innerKey, value: initial[innerKey] })
         }
         return final
     }

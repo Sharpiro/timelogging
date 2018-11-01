@@ -2,9 +2,11 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppComponent } from './app.component';
-import { MatButtonModule, MatCheckboxModule, MatFormFieldModule, MatOptionModule, MatSelectModule, 
-  MatSidenavModule, MatIconModule, MatToolbarModule, MatDialogModule, ErrorStateMatcher, 
-  ShowOnDirtyErrorStateMatcher, MatTabsModule, MatTableModule, MatCardModule, MatProgressBarModule } from '@angular/material';
+import {
+  MatButtonModule, MatCheckboxModule, MatFormFieldModule, MatOptionModule, MatSelectModule,
+  MatSidenavModule, MatIconModule, MatToolbarModule, MatDialogModule, ErrorStateMatcher,
+  ShowOnDirtyErrorStateMatcher, MatTabsModule, MatTableModule, MatCardModule, MatProgressBarModule
+} from '@angular/material';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBarModule } from '@angular/material/snack-bar';

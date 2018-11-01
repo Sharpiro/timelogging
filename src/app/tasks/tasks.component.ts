@@ -17,9 +17,8 @@ export class TasksComponent implements OnInit {
 
   async ngOnInit() {
     try {
-      this.tasks = (await this.timeloggingService.getTasks()).sort((one, two) => { return +one.inverseMilliseconds - +two.inverseMilliseconds })
-    }
-    catch (error) {
+      this.tasks = (await this.timeloggingService.getTasks()).sort((one, two) => +one.inverseMilliseconds - +two.inverseMilliseconds)
+    } catch (error) {
       this.snackBar.open(error.message, undefined, { duration: 5000 })
       console.error(error)
     }
@@ -33,14 +32,13 @@ export class TasksComponent implements OnInit {
       width: "400px",
       data: task
     })
-    dialogRef.componentInstance.submitted.subscribe(async (task: Task) => {
+    dialogRef.componentInstance.submitted.subscribe(async (innerTask: Task) => {
       dialogRef.close()
 
       try {
-        await this.timeloggingService.updateTask(task)
-        this.snackBar.open(`task '${task.name}' updated successfully`, "OK", { duration: 5000 })
-      }
-      catch (ex) {
+        await this.timeloggingService.updateTask(innerTask)
+        this.snackBar.open(`task '${innerTask.name}' updated successfully`, "OK", { duration: 5000 })
+      } catch (ex) {
         this.snackBar.open(`error: ${ex.message}`, "OK", { duration: 5000 })
       }
     });

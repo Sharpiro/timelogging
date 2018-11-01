@@ -4,7 +4,7 @@ import { TimeloggingService } from '../shared/timelogging.service';
 import { Log } from '../shared/models/log';
 import { Task } from '../shared/models/task';
 import { TaskProgress } from '../shared/models/task-progress';
-import { Category } from '../shared/category';
+import { Category } from '../shared/models/category';
 import { ModifyTaskComponent } from './modify-task/modify-task.component';
 
 @Component({
@@ -31,8 +31,7 @@ export class ReportingComponent implements OnInit {
       this.taskProgress = await this.timeloggingService.getWeeklyProgress(this.tasks, this.logs)
       this.categories = await this.timeloggingService.getCategories()
 
-    }
-    catch (error) {
+    } catch (error) {
       this.snackBar.open(error.message, undefined, { duration: 5000 })
       console.error(error)
     }
@@ -43,14 +42,13 @@ export class ReportingComponent implements OnInit {
       width: "400px",
       data: task
     })
-    dialogRef.componentInstance.submitted.subscribe(async (task: Task) => {
+    dialogRef.componentInstance.submitted.subscribe(async (innerTask: Task) => {
       dialogRef.close()
 
       try {
-        await this.timeloggingService.updateTask(task)
-        this.snackBar.open(`task '${task.name}' updated successfully`, "OK", { duration: 5000 })
-      }
-      catch (ex) {
+        await this.timeloggingService.updateTask(innerTask)
+        this.snackBar.open(`task '${innerTask.name}' updated successfully`, "OK", { duration: 5000 })
+      } catch (ex) {
         this.snackBar.open(`error: ${ex.message}`, "OK", { duration: 5000 })
       }
     });
